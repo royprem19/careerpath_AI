@@ -11,6 +11,8 @@ from docx.oxml.ns import nsdecls
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = BASE_DIR / "backend" / "data"
+FIG_DIR = DATA_DIR / "figures"
+USER_UPLOADED_DIR = Path("C:/Users/Prem/.gemini/antigravity/brain/01ba4e8a-e1f2-4bbb-bca4-f95260025042/.user_uploaded")
 RESULTS_FILE = DATA_DIR / "hackathon_analytics_results.json"
 OUTPUT_FILE = BASE_DIR / "Approach_Note_CareerPath_AI.docx"
 
@@ -98,6 +100,34 @@ def add_code_block(doc, code_str):
     r.font.size = Pt(9)
     r.font.color.rgb = RGBColor(226, 232, 240)
     doc.add_paragraph().paragraph_format.space_after = Pt(4)
+
+def add_figure(doc, img_path, caption_title, caption_desc, width_inches=6.0):
+    target_path = Path(img_path)
+    if not target_path.exists():
+        return
+    p_img = doc.add_paragraph()
+    p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_img.paragraph_format.space_before = Pt(10)
+    p_img.paragraph_format.space_after = Pt(2)
+    run = p_img.add_run()
+    run.add_picture(str(target_path), width=Inches(width_inches))
+    
+    p_cap = doc.add_paragraph()
+    p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_cap.paragraph_format.space_before = Pt(2)
+    p_cap.paragraph_format.space_after = Pt(10)
+    
+    r_cap_title = p_cap.add_run(f"{caption_title}: ")
+    r_cap_title.font.name = "Times New Roman"
+    r_cap_title.font.size = Pt(9.5)
+    r_cap_title.font.bold = True
+    r_cap_title.font.color.rgb = RGBColor(15, 23, 42)
+    
+    r_cap_desc = p_cap.add_run(caption_desc)
+    r_cap_desc.font.name = "Times New Roman"
+    r_cap_desc.font.size = Pt(9.0)
+    r_cap_desc.font.italic = True
+    r_cap_desc.font.color.rgb = RGBColor(71, 85, 105)
 
 def add_heading_1(doc, text):
     h = doc.add_heading(text, level=1)
@@ -288,6 +318,14 @@ def main():
         "measuring the empirical competencies and psychological traits that statistically govern high performance, promotion velocity, and successful client delivery."
     )
 
+    add_figure(
+        doc,
+        USER_UPLOADED_DIR / "media_1791359229907.png",
+        "Figure 1",
+        "Official Chandigarh University & SAS Institute National Hackathon Problem Statement & 100-Mark Rubric Framework",
+        width_inches=6.2
+    )
+
     add_heading_2(doc, "1.2 Theoretical Foundations of Human Capital in Analytics")
     doc.add_paragraph(
         "To formulate a scientifically rigorous solution, CareerPath AI grounds its analytical objectives in three foundational social science and psychological frameworks:"
@@ -421,6 +459,14 @@ def main():
 +----------------------------------------------------------------------------------------------------+"""
     )
 
+    add_figure(
+        doc,
+        FIG_DIR / "fig6_architecture.png",
+        "Figure 2",
+        "CareerPath AI Production Microservice Topology & Multi-Tier Enterprise Architecture",
+        width_inches=6.2
+    )
+
     add_heading_2(doc, "2.2 End-to-End Methodological Architecture")
     doc.add_paragraph(
         "The analytical pipeline proceeds through five sequentially coupled phases, ensuring complete reproducibility from raw CSV/Excel ingestion to production API serving:"
@@ -470,13 +516,26 @@ def main():
             algo_tbl.rows[row_idx].cells[col_idx].text = val
     style_table(algo_tbl, [1.4, 1.8, 1.3, 1.1, 1.6])
 
-    add_heading_2(doc, "2.4 Computational Implementation & Environment")
+    add_heading_2(doc, "2.4 Computational Implementation, Cloud Persistence & Supabase Integration")
     doc.add_paragraph(
         "To guarantee that the analytical pipeline executes reliably during offline evaluation without dependency on external cloud connections, "
         "the modeling engine was engineered entirely in pure Python 3.13 utilizing NumPy and SciPy. This eliminates vulnerability to native C-extension DLL blocks "
         "frequently encountered on managed Windows environments (such as AppLocker blocks on libsvm). "
         "The REST API is implemented in FastAPI, providing sub-millisecond response times for real-time slider manipulation on the React client. "
         "All engineered tables and model parameters are fully compatible with SAS Viya and SAS Visual Analytics (VFL)."
+    )
+    doc.add_paragraph(
+        "Furthermore, CareerPath AI integrates with a live production Supabase PostgreSQL instance featuring Row Level Security (RLS) "
+        "across core tables ('gap_analyses', 'roles', 'skills', 'user_profiles'). Whenever a candidate executes a skill benchmark analysis "
+        "on the web interface, calculated fit metrics and skill vectors are automatically logged in real time into the 'gap_analyses' table for historical auditing and institutional analytics."
+    )
+
+    add_figure(
+        doc,
+        USER_UPLOADED_DIR / "media_1791372249555.png",
+        "Figure 3",
+        "Production Cloud Infrastructure & Relational Schema Proof (Supabase PostgreSQL gap_analyses, roles, skills, and user_profiles)",
+        width_inches=6.2
     )
 
     doc.add_page_break()
@@ -515,6 +574,20 @@ def main():
         "4. SDS Personality Traits.xlsx (161 Rows x 7 Columns):\n"
         "Profiles customer-facing Senior Data Scientists under the Big Five (OCEAN) construct: 'neuroticism', 'extraversion', 'openness_to_experience', "
         "'agreeableness', 'conscientiousness', and the binary delivery success outcome 'success_classification_high_low' (1 = High client success [52.8%], 0 = Standard/low success [47.2%])."
+    )
+    doc.add_paragraph(
+        "5. Automated Candidate Competency Normalization Engine:\n"
+        "In addition to tabular corporate datasets, CareerPath AI deploys a specialized multi-format resume parsing and normalization engine "
+        "(PyMuPDF and python-docx). The parser extracts candidate qualifications (accredited institutions such as Chandigarh University, CSE degrees, CGPA metrics) "
+        "and corporate work history (internships such as Solitaire Infosys Data Analytics Intern, Mohali), structuring raw text into normalized competency vectors for benchmark alignment."
+    )
+
+    add_figure(
+        doc,
+        USER_UPLOADED_DIR / "media_1791370066018.png",
+        "Figure 4",
+        "Live Candidate Profile Verification & Credential Normalization Interface (Automatic Extraction of Technical Skills, Academic Degrees, and Practical Internships)",
+        width_inches=6.2
     )
 
     add_heading_2(doc, "3.2 Data Quality Audit, Missingness & Anomaly Resolution")
@@ -559,6 +632,14 @@ def main():
         "Machine Learning (734 mentions), Advanced Excel (664 mentions), Tableau (201 mentions), and Power BI (92 mentions)."
     )
 
+    add_figure(
+        doc,
+        FIG_DIR / "fig4_skill_distribution.png",
+        "Figure 5",
+        "Core Competency Demand Distribution Across Data Science & Analytics Postings (N=17,443)",
+        width_inches=6.0
+    )
+
     add_heading_2(doc, "3.4 Exploratory Bivariate Distributions & Regional Clusters")
     doc.add_paragraph(
         "Cross-tabulating geographic location against compensation reveals pronounced regional clustering across India's analytics hubs:"
@@ -580,6 +661,14 @@ def main():
         for col_idx, val in enumerate(r):
             geo_tbl.rows[row_idx].cells[col_idx].text = val
     style_table(geo_tbl, [1.6, 1.2, 1.2, 1.4, 1.8])
+
+    add_figure(
+        doc,
+        FIG_DIR / "fig2_sds_ocean.png",
+        "Figure 6",
+        "Five-Factor Model (OCEAN) Psychometric Trait Comparison Between High-Success and Low-Success Senior Data Scientists (N=161)",
+        width_inches=6.2
+    )
 
     doc.add_page_break()
 
@@ -616,6 +705,14 @@ def main():
         "complex technical findings into business presentations are perceived as dramatically more valuable than those who produce isolated code.\n"
         "2. The Big Data Hygiene Factor (H2 Confirmed): Big Data skills yield t = 1.323 with p = 0.188. Because p > 0.05, we fail to reject the null hypothesis. "
         "Big Data infrastructure is a baseline requirement; possessing average versus high Big Data skills does not differentiate junior salary increments."
+    )
+
+    add_figure(
+        doc,
+        FIG_DIR / "fig1_jds_odds.png",
+        "Figure 7",
+        "Logistic Regression Feature Odds Ratios on Junior Data Scientist Promotion Likelihood (N=139)",
+        width_inches=6.0
     )
 
     add_heading_2(doc, "4.2 Statistical Hypothesis Testing on Senior Data Scientists (SDS)")
@@ -670,6 +767,14 @@ def main():
             cv_tbl.rows[row_idx].cells[col_idx].text = val
     style_table(cv_tbl, [2.2, 1.0, 0.9, 0.9, 0.9, 0.9])
 
+    add_figure(
+        doc,
+        FIG_DIR / "fig5_roc_curves.png",
+        "Figure 8",
+        "Receiver Operating Characteristic (ROC) Validation Curves for JDS Promotion & SDS Leadership Models",
+        width_inches=5.8
+    )
+
     add_heading_2(doc, "4.4 Econometric Parameter Estimates & Odds Ratios")
     doc.add_paragraph(
         "By fitting regularized Maximum Likelihood Estimation Logistic Regression over standardized feature spaces, "
@@ -714,6 +819,14 @@ def main():
         "Crucially, the negative volume elasticity (Beta_2 = -1.41) statistically confirms that mass-hiring enterprise campaigns "
         "(e.g., TCS with 9,064 jobs, Accenture with 5,425 jobs) exhibit commoditized compensation bands, whereas specialized boutique hiring "
         "(e.g., Emirates Airlines at 68.3 LPA, Hitachi at 40.0 LPA, Intuit at 39.0 LPA) commands premium compensation."
+    )
+
+    add_figure(
+        doc,
+        FIG_DIR / "fig3_salary_trajectories.png",
+        "Figure 9",
+        "Econometric Mincerian Salary Trajectories Across Major Tech Hubs (N=17,443)",
+        width_inches=6.0
     )
 
     add_heading_2(doc, "4.6 Inferential Tests: ANOVA & Chi-Square Contingency Analysis")
@@ -781,6 +894,14 @@ def main():
         "such as 'Executive Technical Director' or 'Lead Analytics Consultant.'\n"
         "• The Market Insights Explorer (/market-insights) operationalizes the econometric regression, providing candidates with transparent, evidence-based "
         "compensation benchmarks based on experience and city."
+    )
+
+    add_figure(
+        doc,
+        USER_UPLOADED_DIR / "media_1791328344366.png",
+        "Figure 10",
+        "Production Workforce Intelligence, Radar Analytics, and Personalized Learning Roadmap Web Application",
+        width_inches=6.2
     )
 
     doc.add_page_break()
