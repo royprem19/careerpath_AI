@@ -20,7 +20,7 @@ def set_cell_background(cell, fill_hex):
     shd = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{fill_hex}"/>')
     tcPr.append(shd)
 
-def set_cell_margins(cell, top=100, bottom=100, left=130, right=130):
+def set_cell_margins(cell, top=30, bottom=30, left=60, right=60):
     tcPr = cell._tc.get_or_add_tcPr()
     tcMar = parse_xml(f'<w:tcMar {nsdecls("w")}><w:top w:w="{top}" w:type="dxa"/><w:bottom w:w="{bottom}" w:type="dxa"/><w:left w:w="{left}" w:type="dxa"/><w:right w:w="{right}" w:type="dxa"/></w:tcMar>')
     tcPr.append(tcMar)
@@ -28,28 +28,33 @@ def set_cell_margins(cell, top=100, bottom=100, left=130, right=130):
 def style_custom_table(table, col_widths=None):
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     for i, row in enumerate(table.rows):
+        trPr = row._tr.get_or_add_trPr()
+        cantSplit = parse_xml(f'<w:cantSplit {nsdecls("w")}/>')
+        trPr.append(cantSplit)
         for j, cell in enumerate(row.cells):
             cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
-            set_cell_margins(cell, top=110, bottom=110, left=130, right=130)
+            set_cell_margins(cell, top=30, bottom=30, left=60, right=60)
             if i == 0:
                 set_cell_background(cell, "1E3A8A")
                 for p in cell.paragraphs:
-                    p.paragraph_format.space_before = Pt(3)
-                    p.paragraph_format.space_after = Pt(3)
+                    p.paragraph_format.space_before = Pt(1)
+                    p.paragraph_format.space_after = Pt(1)
+                    p.paragraph_format.line_spacing = 1.0
                     for r in p.runs:
                         r.font.name = "Arial"
-                        r.font.size = Pt(9.5)
+                        r.font.size = Pt(8.5)
                         r.font.bold = True
                         r.font.color.rgb = RGBColor(255, 255, 255)
             else:
                 bg = "F8FAFC" if i % 2 == 1 else "FFFFFF"
                 set_cell_background(cell, bg)
                 for p in cell.paragraphs:
-                    p.paragraph_format.space_before = Pt(2)
-                    p.paragraph_format.space_after = Pt(2)
+                    p.paragraph_format.space_before = Pt(0.5)
+                    p.paragraph_format.space_after = Pt(1)
+                    p.paragraph_format.line_spacing = 1.0
                     for r in p.runs:
                         r.font.name = "Arial"
-                        r.font.size = Pt(9.0)
+                        r.font.size = Pt(8.0)
                         r.font.color.rgb = RGBColor(30, 41, 59)
             if col_widths and j < len(col_widths):
                 cell.width = Inches(col_widths[j])
@@ -59,47 +64,47 @@ def add_callout_after(ref_element, title, text, doc, bg_hex="EFF6FF", border_hex
     tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
     cell = tbl.cell(0, 0)
     set_cell_background(cell, bg_hex)
-    set_cell_margins(cell, top=120, bottom=120, left=150, right=150)
+    set_cell_margins(cell, top=45, bottom=45, left=80, right=80)
     
     tcPr = cell._tc.get_or_add_tcPr()
     borders = parse_xml(f'<w:tcBorders {nsdecls("w")}><w:left w:val="single" w:sz="24" w:space="0" w:color="{border_hex}"/><w:top w:val="none"/><w:right w:val="none"/><w:bottom w:val="none"/></w:tcBorders>')
     tcPr.append(borders)
     
     p = cell.paragraphs[0]
-    p.paragraph_format.space_before = Pt(2)
-    p.paragraph_format.space_after = Pt(2)
-    p.paragraph_format.line_spacing = 1.05
+    p.paragraph_format.space_before = Pt(1)
+    p.paragraph_format.space_after = Pt(1)
+    p.paragraph_format.line_spacing = 1.02
     
     r_title = p.add_run(f"★ {title}\n")
     r_title.font.name = "Arial"
-    r_title.font.size = Pt(10)
+    r_title.font.size = Pt(9.5)
     r_title.font.bold = True
     r_title.font.color.rgb = RGBColor(30, 58, 138)
     
     r_text = p.add_run(text)
     r_text.font.name = "Arial"
-    r_text.font.size = Pt(9.0)
+    r_text.font.size = Pt(8.5)
     r_text.font.color.rgb = RGBColor(30, 41, 59)
     
     ref_element.addnext(tbl._tbl)
     return tbl._tbl
 
-def add_paragraph_after(ref_element, text, doc, bold_prefix=None, space_after=4, italic=False):
+def add_paragraph_after(ref_element, text, doc, bold_prefix=None, space_after=2, italic=False):
     p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(2)
+    p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(space_after)
-    p.paragraph_format.line_spacing = 1.05
+    p.paragraph_format.line_spacing = 1.02
     
     if bold_prefix:
         r_b = p.add_run(bold_prefix)
         r_b.font.name = "Arial"
-        r_b.font.size = Pt(10)
+        r_b.font.size = Pt(9.5)
         r_b.font.bold = True
         r_b.font.color.rgb = RGBColor(15, 23, 42)
         
     r_t = p.add_run(text)
     r_t.font.name = "Arial"
-    r_t.font.size = Pt(9.5)
+    r_t.font.size = Pt(9.0)
     if italic:
         r_t.font.italic = True
     r_t.font.color.rgb = RGBColor(30, 41, 59)
@@ -107,33 +112,33 @@ def add_paragraph_after(ref_element, text, doc, bold_prefix=None, space_after=4,
     ref_element.addnext(p._p)
     return p._p
 
-def add_figure_after(ref_element, image_path, caption_title, caption_desc, doc, width_inches=5.8):
+def add_figure_after(ref_element, image_path, caption_title, caption_desc, doc, width_inches=3.95):
     if not os.path.exists(str(image_path)):
         print(f"WARNING: Image not found at {image_path}")
         return ref_element
     
     p_img = doc.add_paragraph()
     p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_img.paragraph_format.space_before = Pt(8)
-    p_img.paragraph_format.space_after = Pt(2)
+    p_img.paragraph_format.space_before = Pt(2)
+    p_img.paragraph_format.space_after = Pt(1)
     run_img = p_img.add_run()
     run_img.add_picture(str(image_path), width=Inches(width_inches))
     ref_element.addnext(p_img._p)
     
     p_cap = doc.add_paragraph()
     p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_cap.paragraph_format.space_before = Pt(2)
-    p_cap.paragraph_format.space_after = Pt(8)
+    p_cap.paragraph_format.space_before = Pt(1)
+    p_cap.paragraph_format.space_after = Pt(3)
     
     r_cap_title = p_cap.add_run(f"{caption_title}. ")
     r_cap_title.font.name = "Arial"
-    r_cap_title.font.size = Pt(9.0)
+    r_cap_title.font.size = Pt(8.5)
     r_cap_title.font.bold = True
     r_cap_title.font.color.rgb = RGBColor(15, 23, 42)
     
     r_cap_desc = p_cap.add_run(caption_desc)
     r_cap_desc.font.name = "Arial"
-    r_cap_desc.font.size = Pt(8.5)
+    r_cap_desc.font.size = Pt(8.0)
     r_cap_desc.font.italic = True
     r_cap_desc.font.color.rgb = RGBColor(71, 85, 105)
     p_img._p.addnext(p_cap._p)
@@ -240,7 +245,7 @@ def update_user_report():
         "Figure EDA-1",
         "Systematic missing-value audit and data completeness summary across scraped vs. structured datasets.",
         doc,
-        width_inches=5.8
+        width_inches=3.95
     )
     cur_elem = add_paragraph_after(
         cur_elem,
@@ -255,7 +260,7 @@ def update_user_report():
         "Figure EDA-2",
         "Salary distribution audit: raw discrete brackets vs. cleaned continuous metric with outlier trimming.",
         doc,
-        width_inches=5.8
+        width_inches=3.95
     )
     cur_elem = add_paragraph_after(
         cur_elem,
@@ -270,7 +275,7 @@ def update_user_report():
         "Figure EDA-3",
         "Bivariate experience-salary scaling and stratified cohort dispersion across experience bands.",
         doc,
-        width_inches=5.8
+        width_inches=3.95
     )
     cur_elem = add_paragraph_after(
         cur_elem,
@@ -285,7 +290,7 @@ def update_user_report():
         "Figure EDA-4",
         "Empirical feature inter-correlation heatmaps for JDS competencies (N=139) and SDS psychometrics (N=161).",
         doc,
-        width_inches=5.8
+        width_inches=3.95
     )
     cur_elem = add_paragraph_after(
         cur_elem,
@@ -433,7 +438,7 @@ def update_user_report():
             "Figure 11",
             "Residual analysis and stratified prediction error calibration across experience cohorts (Held-out test set N=1,100).",
             doc,
-            width_inches=5.8
+            width_inches=3.95
         )
         
         cur_elem = add_paragraph_after(
@@ -545,6 +550,11 @@ def update_user_report():
             doc
         )
 
+    # -------------------------------------------------------------------------
+    # 5. GLOBAL LAYOUT OPTIMIZATION (Strict Budget: 20-30 Pages Max)
+    # -------------------------------------------------------------------------
+    optimize_global_layout(doc, img_width=3.95, margin=0.55)
+
     # Save to both TARGET_DOCX and DOWNLOADS_DOCX
     print(f"\nSaving updated document to workspace: {TARGET_DOCX}...")
     doc.save(str(TARGET_DOCX))
@@ -553,6 +563,78 @@ def update_user_report():
     shutil.copyfile(str(TARGET_DOCX), str(DOWNLOADS_DOCX))
     
     print("\nSUCCESS: User's Word document successfully updated in both locations!")
+
+def optimize_global_layout(doc, img_width=3.95, margin=0.55):
+    print("\nApplying global page-budget layout optimization (Target: 20-30 pages max)...")
+    
+    # 1. Adjust Section Margins
+    for section in doc.sections:
+        section.top_margin = Inches(margin)
+        section.bottom_margin = Inches(margin)
+        section.left_margin = Inches(margin)
+        section.right_margin = Inches(margin)
+        section.header_distance = Inches(0.35)
+        section.footer_distance = Inches(0.35)
+        
+    # 2. Resize All Inline Images
+    img_count = 0
+    for shape in doc.inline_shapes:
+        old_w = shape.width.inches
+        old_h = shape.height.inches
+        aspect = old_h / old_w if old_w > 0 else 0.5625
+        shape.width = Inches(img_width)
+        shape.height = Inches(img_width * aspect)
+        img_count += 1
+    print(f"   -> Resized {img_count} images to width {img_width} in.")
+
+    # 3. Optimize Tables
+    for tbl_idx, table in enumerate(doc.tables):
+        is_callout = (len(table.rows) == 1 and len(table.columns) == 1)
+        top_dxa = 45 if is_callout else 30
+        bot_dxa = 45 if is_callout else 30
+        lr_dxa = 80 if is_callout else 60
+        
+        for r_idx, row in enumerate(table.rows):
+            trPr = row._tr.get_or_add_trPr()
+            if not is_callout:
+                cantSplit = parse_xml(f'<w:cantSplit {nsdecls("w")}/>')
+                trPr.append(cantSplit)
+                
+            for cell in row.cells:
+                tcPr = cell._tc.get_or_add_tcPr()
+                tcMar = parse_xml(f'<w:tcMar {nsdecls("w")}><w:top w:w="{top_dxa}" w:type="dxa"/><w:bottom w:w="{bot_dxa}" w:type="dxa"/><w:left w:w="{lr_dxa}" w:type="dxa"/><w:right w:w="{lr_dxa}" w:type="dxa"/></w:tcMar>')
+                tcPr.append(tcMar)
+                for p in cell.paragraphs:
+                    p.paragraph_format.space_before = Pt(0.5)
+                    p.paragraph_format.space_after = Pt(1.0)
+                    p.paragraph_format.line_spacing = 1.0
+                    for r in p.runs:
+                        if not is_callout and r.font.size and r.font.size > Pt(8.5):
+                            r.font.size = Pt(8.0)
+                        elif is_callout and r.font.size and r.font.size > Pt(9.5):
+                            r.font.size = Pt(9.0)
+
+    # 4. Paragraph spacing
+    for p in doc.paragraphs:
+        txt = p.text.strip()
+        style_name = p.style.name if p.style else ""
+        if style_name.startswith("Heading 1") or (p.runs and p.runs[0].font.size and p.runs[0].font.size >= Pt(14)):
+            p.paragraph_format.space_before = Pt(6)
+            p.paragraph_format.space_after = Pt(2.5)
+        elif style_name.startswith("Heading 2") or (p.runs and p.runs[0].font.size and p.runs[0].font.size >= Pt(12)):
+            p.paragraph_format.space_before = Pt(4)
+            p.paragraph_format.space_after = Pt(2)
+        elif style_name.startswith("Heading 3") or (p.runs and p.runs[0].font.size and p.runs[0].font.size >= Pt(11)):
+            p.paragraph_format.space_before = Pt(3)
+            p.paragraph_format.space_after = Pt(1.5)
+        elif "Figure " in txt and (p.alignment == WD_ALIGN_PARAGRAPH.CENTER):
+            p.paragraph_format.space_before = Pt(1.5)
+            p.paragraph_format.space_after = Pt(3)
+        else:
+            p.paragraph_format.space_before = Pt(0)
+            p.paragraph_format.space_after = Pt(2.0)
+            p.paragraph_format.line_spacing = 1.02
+    print("   -> Applied compact paragraph and table styling across document.")
 
 if __name__ == "__main__":
     update_user_report()
