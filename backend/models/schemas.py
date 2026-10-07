@@ -9,8 +9,8 @@ from backend.services.sanitizer import (
 
 class ResumeUploadResponse(BaseModel):
     skills: List[str] = []
-    education: List[str] = []
-    experience: Dict[str, Any] = {}
+    education: List[Union[Dict[str, Any], str]] = []
+    experience: Union[List[Dict[str, Any]], Dict[str, Any]] = []
     certifications: List[str] = []
     raw_text: str = ""
     confidence_score: float = 1.0
@@ -125,8 +125,8 @@ class RoadmapResponse(BaseModel):
 
 class UserProfile(BaseModel):
     skills: List[str] = []
-    education: List[str] = []
-    experience: Dict[str, Any] = {}
+    education: List[Union[Dict[str, Any], str]] = []
+    experience: Union[List[Dict[str, Any]], Dict[str, Any]] = []
     certifications: List[str] = []
 
 # ==============================================================================

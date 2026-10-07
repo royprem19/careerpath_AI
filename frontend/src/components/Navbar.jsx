@@ -3,7 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { 
   LogIn, LogOut, Sparkles, Menu, X, Home, 
-  HelpCircle, Briefcase, LayoutDashboard, User, Info 
+  HelpCircle, Briefcase, LayoutDashboard, User, Info,
+  TrendingUp, BarChart2 
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -104,6 +105,28 @@ const Navbar = () => {
               }`}
             >
               Dashboard
+            </Link>
+
+            <Link 
+              to="/career-growth" 
+              className={`text-sm px-3.5 py-1.5 rounded-full transition-all duration-200 ${
+                isNavActive('/career-growth') 
+                  ? 'bg-indigo-50/90 text-indigo-700 font-bold border border-indigo-100/80 shadow-2xs' 
+                  : 'text-slate-600 hover:text-indigo-600 font-medium hover:bg-slate-100/60'
+              }`}
+            >
+              Growth AI
+            </Link>
+
+            <Link 
+              to="/market-insights" 
+              className={`text-sm px-3.5 py-1.5 rounded-full transition-all duration-200 ${
+                isNavActive('/market-insights') 
+                  ? 'bg-indigo-50/90 text-indigo-700 font-bold border border-indigo-100/80 shadow-2xs' 
+                  : 'text-slate-600 hover:text-indigo-600 font-medium hover:bg-slate-100/60'
+              }`}
+            >
+              Market Insights
             </Link>
 
             {/* Desktop Auth State Button */}
@@ -237,6 +260,32 @@ const Navbar = () => {
           >
             <LayoutDashboard size={17} className={isNavActive('/dashboard') ? 'text-indigo-600' : 'text-slate-400'} />
             <span>Dashboard</span>
+          </Link>
+
+          <Link
+            to="/career-growth"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-bold transition-colors ${
+              isNavActive('/career-growth')
+                ? 'bg-indigo-50 text-indigo-700 border border-indigo-200/80 shadow-2xs'
+                : 'text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            <TrendingUp size={17} className={isNavActive('/career-growth') ? 'text-indigo-600' : 'text-slate-400'} />
+            <span>Growth AI (Promotion & Leadership)</span>
+          </Link>
+
+          <Link
+            to="/market-insights"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-bold transition-colors ${
+              isNavActive('/market-insights')
+                ? 'bg-indigo-50 text-indigo-700 border border-indigo-200/80 shadow-2xs'
+                : 'text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            <BarChart2 size={17} className={isNavActive('/market-insights') ? 'text-indigo-600' : 'text-slate-400'} />
+            <span>Market Insights (17k+ Jobs)</span>
           </Link>
 
           {/* User Auth Section in Mobile Menu */}

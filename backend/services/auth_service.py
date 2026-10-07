@@ -494,6 +494,31 @@ def get_current_user(token: str) -> Optional[UserResponse]:
                 return user_res
         except Exception as e:
             logger.warning(f"Error fetching user from Supabase: {e}")
+
+    # Fallback to cryptographically validated claims inside token payload
+    if payload.get("sub") and email:
+        fallback_user = UserResponse(
+            id=str(payload.get("sub")),
+            email=email,
+            user_name=payload.get("name") or "User",
+            role=payload.get("role", "candidate"),
+            institution_name="Other Indian University / Institute",
+            department="Computer Science & Engineering",
+            graduation_year=2026,
+            skills=[]
+        )
+        _LOCAL_USERS_DB[email] = {
+            "id": fallback_user.id,
+            "email": fallback_user.email,
+            "user_name": fallback_user.user_name,
+            "role": fallback_user.role,
+            "institution_name": fallback_user.institution_name,
+            "department": fallback_user.department,
+            "graduation_year": fallback_user.graduation_year,
+            "skills": []
+        }
+        return fallback_user
+
     return None
 
 def update_user_profile(user_id: str, req: UserUpdateRequest) -> UserResponse:

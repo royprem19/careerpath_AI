@@ -1,28 +1,119 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import SkillTag from '../components/SkillTag';
-import { GraduationCap, Briefcase, Plus, ArrowRight, LayoutDashboard, AlertCircle, Sparkles, CheckCircle2 } from 'lucide-react';
+import { 
+  GraduationCap, 
+  Briefcase, 
+  Plus, 
+  ArrowRight, 
+  LayoutDashboard, 
+  AlertCircle, 
+  Sparkles, 
+  CheckCircle2, 
+  Trash2,
+  Calendar,
+  Building2,
+  Award
+} from 'lucide-react';
 
 const ProfileReview = () => {
   const { userProfile, setUserProfile } = useAppContext();
   const navigate = useNavigate();
   const [newSkill, setNewSkill] = useState('');
 
+  // Add education state
+  const [showAddEdu, setShowAddEdu] = useState(false);
+  const [newDegree, setNewDegree] = useState('');
+  const [newInstitution, setNewInstitution] = useState('');
+  const [newEduYear, setNewEduYear] = useState('');
+
+  // Add experience state
+  const [showAddExp, setShowAddExp] = useState(false);
+  const [newRole, setNewRole] = useState('');
+  const [newCompany, setNewCompany] = useState('');
+  const [newExpDuration, setNewExpDuration] = useState('');
+  const [newIsInternship, setNewIsInternship] = useState(false);
+
+  // Normalize Education into array of structured objects
+  const normalizedEducation = useMemo(() => {
+    const raw = userProfile?.education;
+    if (!raw) return [];
+    const list = Array.isArray(raw) ? raw : [raw];
+    return list.map(item => {
+      if (!item) return null;
+      if (typeof item === 'string') {
+        return {
+          degree: item,
+          institution: 'Recognized Institution / University',
+          year: ''
+        };
+      }
+      return {
+        degree: item.degree || item.name || item.title || 'Academic Degree',
+        institution: item.institution || item.school || item.college || 'Higher Education Institution',
+        year: item.year || item.duration || item.grade || ''
+      };
+    }).filter(Boolean);
+  }, [userProfile?.education]);
+
+  // Normalize Experience into array of structured objects
+  const normalizedExperience = useMemo(() => {
+    const raw = userProfile?.experience;
+    if (!raw) return [];
+    if (Array.isArray(raw)) {
+      return raw.map(item => {
+        if (!item) return null;
+        if (typeof item === 'string') {
+          return { role: item, company: 'Industry Organization', duration: '', years: 0.5, has_internship: item.toLowerCase().includes('intern') };
+        }
+        return {
+          role: item.role || item.title || 'Professional Role',
+          company: item.company || item.organization || 'Organization',
+          duration: item.duration || (item.years ? `${item.years} year(s)` : ''),
+          years: item.years || 0.5,
+          has_internship: Boolean(item.has_internship || (item.role && item.role.toLowerCase().includes('intern')))
+        };
+      }).filter(Boolean);
+    }
+    if (typeof raw === 'object') {
+      if (raw.role || raw.company || raw.title) {
+        return [{
+          role: raw.role || raw.title || 'Professional Role',
+          company: raw.company || 'Organization',
+          duration: raw.duration || (raw.years ? `${raw.years} year(s)` : ''),
+          years: raw.years || 0.5,
+          has_internship: Boolean(raw.has_internship || (raw.role && raw.role.toLowerCase().includes('intern')))
+        }];
+      }
+      if (raw.years && Number(raw.years) > 0) {
+        return [{
+          role: 'Professional Experience',
+          company: 'Industry / Engineering Domain',
+          duration: `${raw.years} Year(s) Demonstrated Work`,
+          years: raw.years,
+          has_internship: false
+        }];
+      }
+    }
+    return [];
+  }, [userProfile?.experience]);
+
+  // Skill Management
   const handleRemoveSkill = (skillToRemove) => {
     setUserProfile({
       ...userProfile,
-      skills: userProfile.skills.filter(s => s !== skillToRemove)
+      skills: (userProfile.skills || []).filter(s => s !== skillToRemove)
     });
   };
 
   const handleAddSkill = (e) => {
     if (e.key === 'Enter' && newSkill.trim()) {
       e.preventDefault();
-      if (!userProfile.skills.includes(newSkill.trim())) {
+      if (!userProfile?.skills?.includes(newSkill.trim())) {
         setUserProfile({
           ...userProfile,
-          skills: [...(userProfile.skills || []), newSkill.trim()]
+          skills: [...(userProfile?.skills || []), newSkill.trim()]
         });
       }
       setNewSkill('');
@@ -30,13 +121,70 @@ const ProfileReview = () => {
   };
 
   const addManualSkill = () => {
-    if (newSkill.trim() && !userProfile.skills.includes(newSkill.trim())) {
+    if (newSkill.trim() && !userProfile?.skills?.includes(newSkill.trim())) {
       setUserProfile({
         ...userProfile,
-        skills: [...(userProfile.skills || []), newSkill.trim()]
+        skills: [...(userProfile?.skills || []), newSkill.trim()]
       });
       setNewSkill('');
     }
+  };
+
+  // Education Management
+  const handleRemoveEducation = (index) => {
+    const updated = normalizedEducation.filter((_, idx) => idx !== index);
+    setUserProfile({
+      ...userProfile,
+      education: updated
+    });
+  };
+
+  const handleAddEducation = (e) => {
+    e.preventDefault();
+    if (!newDegree.trim()) return;
+    const newEntry = {
+      degree: newDegree.trim(),
+      institution: newInstitution.trim() || 'Recognized University / School',
+      year: newEduYear.trim()
+    };
+    setUserProfile({
+      ...userProfile,
+      education: [...normalizedEducation, newEntry]
+    });
+    setNewDegree('');
+    setNewInstitution('');
+    setNewEduYear('');
+    setShowAddEdu(false);
+  };
+
+  // Experience Management
+  const handleRemoveExperience = (index) => {
+    const updated = normalizedExperience.filter((_, idx) => idx !== index);
+    setUserProfile({
+      ...userProfile,
+      experience: updated
+    });
+  };
+
+  const handleAddExperience = (e) => {
+    e.preventDefault();
+    if (!newRole.trim()) return;
+    const newEntry = {
+      role: newRole.trim(),
+      company: newCompany.trim() || 'Organization',
+      duration: newExpDuration.trim(),
+      years: newIsInternship ? 0.5 : 1.0,
+      has_internship: newIsInternship || newRole.toLowerCase().includes('intern')
+    };
+    setUserProfile({
+      ...userProfile,
+      experience: [...normalizedExperience, newEntry]
+    });
+    setNewRole('');
+    setNewCompany('');
+    setNewExpDuration('');
+    setNewIsInternship(false);
+    setShowAddExp(false);
   };
 
   const hasFewSkills = (userProfile?.skills?.length || 0) < 3;
@@ -55,7 +203,7 @@ const ProfileReview = () => {
           Review Extracted Profile
         </h1>
         <p className="text-slate-500 font-medium text-sm sm:text-base max-w-2xl">
-          We've normalized your technical skills and parsed your qualifications. Confirm or modify your competencies below to guarantee precision matching.
+          We've normalized your technical competencies, academic credentials, and work history. Verify or customize below to guarantee precision career matchmaking.
         </p>
       </div>
 
@@ -79,7 +227,7 @@ const ProfileReview = () => {
             </p>
             <div className="pt-2 flex flex-wrap items-center gap-1.5">
               <span className="text-[11px] font-bold text-amber-900 mr-1">Quick Add Starters:</span>
-              {['Python', 'JavaScript', 'SQL', 'HTML5', 'CSS3', 'React', 'Git & GitHub', 'Figma', 'Node.js', 'Docker'].map((starter) => (
+              {['Python', 'JavaScript', 'SQL', 'HTML5', 'CSS3', 'React', 'Git & GitHub', 'Figma', 'Node.js', 'Docker', 'Power BI', 'Machine Learning'].map((starter) => (
                 !userProfile?.skills?.includes(starter) && (
                   <button
                     key={starter}
@@ -108,7 +256,7 @@ const ProfileReview = () => {
             <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
               <span>Your Technical Skills</span>
               <span className="bg-indigo-50 text-indigo-700 border border-indigo-200/80 text-xs font-bold py-0.5 px-2.5 rounded-full shadow-2xs">
-                {userProfile.skills?.length || 0} extracted
+                {userProfile?.skills?.length || 0} extracted
               </span>
             </h2>
             <span className="text-xs text-slate-400 font-medium hidden sm:inline-block">
@@ -117,7 +265,7 @@ const ProfileReview = () => {
           </div>
           
           <div className="flex flex-wrap gap-2.5 mb-6 min-h-[50px] p-4 bg-slate-50/70 rounded-2xl border border-slate-200/70">
-            {userProfile.skills && userProfile.skills.length > 0 ? (
+            {userProfile?.skills && userProfile.skills.length > 0 ? (
               userProfile.skills.map((skill, idx) => (
                 <SkillTag 
                   key={idx} 
@@ -156,30 +304,107 @@ const ProfileReview = () => {
           </div>
         </div>
 
-        {/* Education & Experience */}
+        {/* Education & Experience Grid */}
         <div className="grid md:grid-cols-2 gap-8">
+          
           {/* Education Card */}
           <div className="glass-card rounded-3xl p-7 sm:p-8 shadow-xl shadow-indigo-500/5 border border-white/90 flex flex-col justify-between">
             <div>
-              <h2 className="text-lg font-black text-slate-900 mb-5 flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100 shadow-2xs">
-                  <GraduationCap size={18} />
-                </div>
-                <span>Education Background</span>
-              </h2>
-              {userProfile.education?.length > 0 ? (
-                <ul className="space-y-4">
-                  {userProfile.education.map((edu, idx) => (
-                    <li key={idx} className="p-3.5 rounded-2xl bg-slate-50/70 border border-slate-200/70">
-                      <p className="font-bold text-slate-900 text-sm">{edu.degree}</p>
-                      <p className="text-slate-600 text-xs font-medium mt-0.5">{edu.institution}</p>
-                      {edu.year && <p className="text-slate-400 text-[11px] font-semibold mt-1">{edu.year}</p>}
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-lg font-black text-slate-900 flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100 shadow-2xs">
+                    <GraduationCap size={18} />
+                  </div>
+                  <span>Education Background</span>
+                  <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">
+                    {normalizedEducation.length}
+                  </span>
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setShowAddEdu(!showAddEdu)}
+                  className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors"
+                >
+                  <Plus size={14} />
+                  {showAddEdu ? 'Cancel' : 'Add Degree'}
+                </button>
+              </div>
+
+              {/* Add Education Form */}
+              {showAddEdu && (
+                <form onSubmit={handleAddEducation} className="p-4 mb-4 rounded-2xl bg-indigo-50/50 border border-indigo-200/70 space-y-3">
+                  <p className="text-xs font-bold text-indigo-950">Add Qualification</p>
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Degree / Program (e.g. B.E. Computer Science)"
+                      value={newDegree}
+                      onChange={(e) => setNewDegree(e.target.value)}
+                      className="w-full text-xs p-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      placeholder="Institution / University"
+                      value={newInstitution}
+                      onChange={(e) => setNewInstitution(e.target.value)}
+                      className="text-xs p-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Year / CGPA (e.g. 2024 - 2028 | 7.5)"
+                      value={newEduYear}
+                      onChange={(e) => setNewEduYear(e.target.value)}
+                      className="text-xs p-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs"
+                  >
+                    Save Qualification
+                  </button>
+                </form>
+              )}
+
+              {normalizedEducation.length > 0 ? (
+                <ul className="space-y-3.5">
+                  {normalizedEducation.map((edu, idx) => (
+                    <li key={idx} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 hover:border-indigo-200 transition-all flex items-start justify-between gap-3 group">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-bold text-slate-900 text-sm">{edu.degree}</p>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-700">
+                            Verified
+                          </span>
+                        </div>
+                        <p className="text-slate-600 text-xs font-medium flex items-center gap-1.5">
+                          <Building2 size={13} className="text-slate-400" />
+                          {edu.institution}
+                        </p>
+                        {edu.year && (
+                          <p className="text-slate-500 text-[11px] font-semibold flex items-center gap-1.5 mt-0.5">
+                            <Calendar size={12} className="text-slate-400" />
+                            {edu.year}
+                          </p>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveEducation(idx)}
+                        className="opacity-60 hover:opacity-100 text-slate-400 hover:text-red-500 p-1.5 rounded-lg transition-colors"
+                        title="Remove entry"
+                      >
+                        <Trash2 size={15} />
+                      </button>
                     </li>
                   ))}
                 </ul>
               ) : (
                 <div className="p-6 text-center rounded-2xl bg-slate-50/50 border border-dashed border-slate-200 text-slate-400 text-xs italic">
-                  No academic degrees automatically detected. You may still proceed with skill benchmark analysis.
+                  No academic degrees automatically detected. You may add qualifications above or proceed with skill benchmark analysis.
                 </div>
               )}
             </div>
@@ -188,19 +413,113 @@ const ProfileReview = () => {
           {/* Experience Card */}
           <div className="glass-card rounded-3xl p-7 sm:p-8 shadow-xl shadow-indigo-500/5 border border-white/90 flex flex-col justify-between">
             <div>
-              <h2 className="text-lg font-black text-slate-900 mb-5 flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100 shadow-2xs">
-                  <Briefcase size={18} />
-                </div>
-                <span>Professional Experience</span>
-              </h2>
-              {userProfile.experience?.length > 0 ? (
-                <ul className="space-y-4">
-                  {userProfile.experience.map((exp, idx) => (
-                    <li key={idx} className="p-3.5 rounded-2xl bg-slate-50/70 border border-slate-200/70">
-                      <p className="font-bold text-slate-900 text-sm">{exp.role}</p>
-                      <p className="text-slate-600 text-xs font-medium mt-0.5">{exp.company}</p>
-                      {exp.duration && <p className="text-slate-400 text-[11px] font-semibold mt-1">{exp.duration}</p>}
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-lg font-black text-slate-900 flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100 shadow-2xs">
+                    <Briefcase size={18} />
+                  </div>
+                  <span>Professional Experience</span>
+                  <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
+                    {normalizedExperience.length}
+                  </span>
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setShowAddExp(!showAddExp)}
+                  className="text-xs font-bold text-purple-600 hover:text-purple-800 flex items-center gap-1 transition-colors"
+                >
+                  <Plus size={14} />
+                  {showAddExp ? 'Cancel' : 'Add Experience'}
+                </button>
+              </div>
+
+              {/* Add Experience Form */}
+              {showAddExp && (
+                <form onSubmit={handleAddExperience} className="p-4 mb-4 rounded-2xl bg-purple-50/50 border border-purple-200/70 space-y-3">
+                  <p className="text-xs font-bold text-purple-950">Add Role / Internship</p>
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Role / Title (e.g. Data Analytics Intern)"
+                      value={newRole}
+                      onChange={(e) => setNewRole(e.target.value)}
+                      className="w-full text-xs p-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-purple-400"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      placeholder="Company / Organization"
+                      value={newCompany}
+                      onChange={(e) => setNewCompany(e.target.value)}
+                      className="text-xs p-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-purple-400"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Duration (e.g. June 2026 - July 2026)"
+                      value={newExpDuration}
+                      onChange={(e) => setNewExpDuration(e.target.value)}
+                      className="text-xs p-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-purple-400"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="isInternship"
+                      checked={newIsInternship}
+                      onChange={(e) => setNewIsInternship(e.target.checked)}
+                      className="rounded text-purple-600 focus:ring-purple-400"
+                    />
+                    <label htmlFor="isInternship" className="text-xs font-medium text-purple-900 cursor-pointer">
+                      This is an Internship / Practical Training
+                    </label>
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs"
+                  >
+                    Save Experience
+                  </button>
+                </form>
+              )}
+
+              {normalizedExperience.length > 0 ? (
+                <ul className="space-y-3.5">
+                  {normalizedExperience.map((exp, idx) => (
+                    <li key={idx} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 hover:border-purple-200 transition-all flex items-start justify-between gap-3 group">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-bold text-slate-900 text-sm">{exp.role}</p>
+                          {exp.has_internship ? (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-100 text-purple-700 border border-purple-200">
+                              Internship
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200">
+                              Industry Track
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-slate-600 text-xs font-medium flex items-center gap-1.5">
+                          <Building2 size={13} className="text-slate-400" />
+                          {exp.company}
+                        </p>
+                        {exp.duration && (
+                          <p className="text-slate-500 text-[11px] font-semibold flex items-center gap-1.5 mt-0.5">
+                            <Calendar size={12} className="text-slate-400" />
+                            {exp.duration}
+                          </p>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveExperience(idx)}
+                        className="opacity-60 hover:opacity-100 text-slate-400 hover:text-red-500 p-1.5 rounded-lg transition-colors"
+                        title="Remove entry"
+                      >
+                        <Trash2 size={15} />
+                      </button>
                     </li>
                   ))}
                 </ul>
@@ -211,6 +530,7 @@ const ProfileReview = () => {
               )}
             </div>
           </div>
+
         </div>
 
         {/* Action Controls */}

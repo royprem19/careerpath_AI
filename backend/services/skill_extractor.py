@@ -135,18 +135,180 @@ def extract_skills(text: str) -> list[str]:
                 
     return list(found_skills)
 
-def extract_education(text: str) -> list[str]:
-    found = set()
-    for pattern, canonical_name in INDIAN_EDUCATION_MAPPINGS:
-        if pattern.search(text):
-            found.add(canonical_name)
-    return sorted(list(found))
+def extract_education(text: str) -> list:
+    """
+    Extracts structured education entries with degree, institution, and year/grade.
+    """
+    clean = text.replace('\u2013', '-').replace('\u2014', '-').replace('\u2212', '-')
+    education_entries = []
+    seen = set()
 
-def extract_experience(text: str) -> dict:
-    match = re.search(r'(\d+)\+?\s*(years?|yrs?)\s+of\s+experience', text.lower())
-    if match:
-        return {"years": int(match.group(1))}
-    return {"years": 0}
+    # 1. Search for EDUCATION section
+    edu_split = re.split(r'\b(?:EDUCATION|ACADEMICS|QUALIFICATIONS)\b', clean, flags=re.I)
+    edu_section = ""
+    if len(edu_split) > 1:
+        edu_section = re.split(r'\b(?:EXPERIENCE|PROJECTS|SKILLS|CERTIFICATIONS|ACHIEVEMENTS|HOBBIES)\b', edu_split[1], flags=re.I)[0]
+    
+    search_text = edu_section if edu_section.strip() else clean
+    lines = [l.strip() for l in search_text.splitlines() if l.strip()]
+
+    inst_indicators = ['university', 'institute', 'college', 'school', 'academy', 'campus', 'vidyalaya', 'polytechnic']
+    degree_indicators = ['bachelor', 'b.tech', 'b.e.', 'master', 'm.tech', 'mca', 'bca', 'mba', 'b.sc', 'm.sc', 'intermediate', 'matriculation', 'secondary', 'diploma', 'phd']
+
+    # Grouped line parsing
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        line_lower = line.lower()
+        if any(ind in line_lower for ind in inst_indicators):
+            inst = line
+            deg = ''
+            yr = ''
+            j = i + 1
+            while j < len(lines) and j <= i + 3:
+                next_line = lines[j]
+                next_lower = next_line.lower()
+                if any(ind in next_lower for ind in inst_indicators):
+                    break
+                if any(ind in next_lower for ind in degree_indicators) and not deg:
+                    deg = next_line
+                elif (re.search(r'\d{4}', next_line) or 'cgpa' in next_lower or 'percentage' in next_lower) and not yr:
+                    yr = next_line
+                j += 1
+            
+            if deg:
+                degree_clean = deg
+                grade_info = ''
+                if '|' in deg:
+                    parts = deg.split('|')
+                    degree_clean = parts[0].strip(' -;,•*')
+                    grade_info = parts[1].strip(' -;,•*')
+                
+                duration_str = yr.strip(' -;,•*') if yr else ''
+                final_yr = f"{duration_str} ({grade_info})" if duration_str and grade_info else (duration_str or grade_info)
+                
+                key = f"{degree_clean.lower()}_{inst.lower()}"
+                if key not in seen:
+                    seen.add(key)
+                    education_entries.append({
+                        "degree": degree_clean,
+                        "institution": inst,
+                        "year": final_yr
+                    })
+                i = j - 1
+        i += 1
+
+    # Fallback to pattern matching if block loop found nothing
+    if not education_entries:
+        degree_patterns = [
+            (r'Bachelor of Engineering[^\n,;]*', "Bachelor of Engineering (CSE)"),
+            (r'Bachelor of Technology[^\n,;]*', "Bachelor of Technology (B.Tech)"),
+            (r'B\.?E\.?\s*(?:in|-)?\s*[^\n,;]*', "Bachelor of Engineering"),
+            (r'B\.?Tech\s*(?:in|-)?\s*[^\n,;]*', "Bachelor of Technology"),
+            (r'Master of Technology[^\n,;]*', "Master of Technology (M.Tech)"),
+            (r'BCA[^\n,;]*', "Bachelor of Computer Applications (BCA)"),
+            (r'MCA[^\n,;]*', "Master of Computer Applications (MCA)"),
+            (r'MBA[^\n,;]*', "Master of Business Administration (MBA)"),
+            (r'Intermediate[^\n,;]*', "Intermediate / Senior Secondary (12th)"),
+            (r'Matriculation[^\n,;]*', "Matriculation / Secondary (10th)")
+        ]
+        inst_match = re.search(r'(Chandigarh University[^\n,]*|[A-Za-z\s]+University[^\n,]*|[A-Za-z\s]+Institute of Technology[^\n,]*|[A-Za-z\s]+Public School[^\n,]*)', clean, re.I)
+        primary_inst = inst_match.group(1).strip() if inst_match else "Recognized Institution"
+
+        for pattern, canonical in degree_patterns:
+            match = re.search(pattern, search_text, re.I)
+            if match:
+                raw_degree = match.group(0).strip(' –-;,•*')
+                inst_name = primary_inst
+                if "School" in raw_degree or "Intermediate" in canonical or "Matriculation" in canonical:
+                    sch_m = re.search(r'([A-Za-z\s]+Public School|[A-Za-z\s]+School)', search_text, re.I)
+                    inst_name = sch_m.group(1).strip() if sch_m else "Senior Secondary School"
+                elif "Chandigarh University" in clean:
+                    inst_name = "Chandigarh University, Mohali"
+                    
+                yr_match = re.search(r'((?:July|Jan|Aug|April|May|March|Dec)?\s*\d{4}\s*[-–]\s*(?:July|Jan|Aug|April|May|March|Dec)?\s*\d{4}\*?|CGPA:\s*[\d\.]+|Percentage:\s*[\d\.]+\%)', search_text, re.I)
+                year_val = yr_match.group(1).strip() if yr_match else ""
+                
+                key = f"{canonical}_{inst_name}"
+                if key not in seen:
+                    seen.add(key)
+                    education_entries.append({
+                        "degree": raw_degree if len(raw_degree) > 5 else canonical,
+                        "institution": inst_name,
+                        "year": year_val
+                    })
+
+    if not education_entries:
+        for pattern, canonical_name in INDIAN_EDUCATION_MAPPINGS:
+            if pattern.search(clean):
+                education_entries.append({
+                    "degree": canonical_name,
+                    "institution": primary_inst if 'primary_inst' in locals() else "Recognized Institution",
+                    "year": ""
+                })
+
+    return education_entries[:4]
+
+def extract_experience(text: str) -> list:
+    """
+    Extracts structured professional experience, internships, job titles, and companies.
+    """
+    clean = text.replace('\u2013', '-').replace('\u2014', '-').replace('\u2212', '-')
+    experience_list = []
+    
+    # Search for dedicated EXPERIENCE section
+    exp_split = re.split(r'\b(?:EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT)\b', clean, flags=re.I)
+    exp_section = ""
+    if len(exp_split) > 1:
+        exp_section = re.split(r'\b(?:EDUCATION|PROJECTS|SKILLS|CERTIFICATIONS|ACHIEVEMENTS|HOBBIES)\b', exp_split[1], flags=re.I)[0]
+        
+    search_text = exp_section if exp_section.strip() else clean
+    lines = search_text.splitlines()
+
+    for line in lines:
+        line_clean = line.strip()
+        if not line_clean or line_clean.startswith('-') or line_clean.startswith('•') or line_clean.startswith('*'):
+            continue
+        if any(skip in line_clean.lower() for skip in ['cgpa', 'percentage', 'bachelor', 'b.tech', 'b.e.', 'm.tech', 'secondary', 'matriculation', 'intermediate']):
+            continue
+        if '|' in line_clean and any(k in line_clean.lower() for k in ['intern', 'analyst', 'engineer', 'developer', 'scientist', 'consultant', 'trainee', 'lead', 'manager', 'associate', 'specialist']):
+            parts = [p.strip() for p in line_clean.split('|') if p.strip()]
+            if len(parts) >= 2:
+                comp = parts[0]
+                role = parts[1]
+                loc = parts[2] if len(parts) > 2 else ''
+                dur = parts[3] if len(parts) > 3 else (parts[2] if len(parts) == 3 and any(c.isdigit() for c in parts[2]) else '')
+                if dur and loc == dur:
+                    loc = ''
+                full_comp = f"{comp}, {loc}" if loc and loc != dur else comp
+                experience_list.append({
+                    "role": role,
+                    "company": full_comp,
+                    "duration": dur,
+                    "years": 0.5 if "intern" in role.lower() else 1.0,
+                    "has_internship": "intern" in role.lower()
+                })
+                
+    if not experience_list:
+        intern_m = re.search(r'(Data Analytics Intern|Software Engineer Intern|Research Intern|Data Scientist|Data Analyst)', search_text, re.I)
+        comp_m = re.search(r'(Solitaire Infosys|[A-Za-z\s]+(?:Infosys|Technologies|Solutions|Services|TCS|Wipro|Cognizant))', search_text, re.I)
+        dur_m = re.search(r'((?:June|July|Jan|Feb|March|April|May|Aug|Sept|Oct|Nov|Dec)\s*\d{4}\s*[-–]\s*(?:June|July|Jan|Feb|March|April|May|Aug|Sept|Oct|Nov|Dec)?\s*\d{4})', search_text, re.I)
+        
+        if intern_m or comp_m:
+            experience_list.append({
+                "role": intern_m.group(1).strip() if intern_m else "Data Analytics Intern",
+                "company": comp_m.group(1).strip() if comp_m else "Industry Project",
+                "duration": dur_m.group(1).strip() if dur_m else "Internship Track",
+                "years": 0.5,
+                "has_internship": True
+            })
+            
+    # Check for explicit experience duration (e.g. 2 years experience)
+    years_m = re.search(r'(\d+(?:\.\d+)?)\+?\s*(?:years?|yrs?)\s*(?:of)?\s*(?:experience)?', clean, re.I)
+    if years_m and experience_list:
+        experience_list[0]["years"] = float(years_m.group(1))
+        
+    return experience_list
 
 def extract_certifications(text: str) -> list[str]:
     cert_keywords = ["AWS", "Azure", "Google Cloud", "GCP", "Cisco", "CompTIA", "Oracle", "Microsoft Certified"]

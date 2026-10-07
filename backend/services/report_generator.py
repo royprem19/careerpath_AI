@@ -118,14 +118,53 @@ def generate_pdf_report(user_profile: dict, gap_analysis: dict, recommendations:
     # Candidate Profile Overview
     story.append(Paragraph("Candidate Profile Snapshot", section_style))
     skills_list = user_profile.get("skills", [])
-    skills_preview = ", ".join(skills_list[:15]) + (f" (+{len(skills_list)-15} more)" if len(skills_list) > 15 else "")
-    edu = clean_text(user_profile.get("education", "Not specified"))
-    exp = clean_text(user_profile.get("experience", "Fresher / Entry Level"))
+    edu_raw = user_profile.get("education", [])
+    if isinstance(edu_raw, list) and edu_raw:
+        edu_items = []
+        for e in edu_raw:
+            if isinstance(e, dict):
+                d = e.get("degree", "")
+                inst = e.get("institution", "")
+                yr = e.get("year", "")
+                part = f"{d} ({inst})" if inst else d
+                if yr:
+                    part += f" - {yr}"
+                edu_items.append(part)
+            else:
+                edu_items.append(str(e))
+        edu = "; ".join(edu_items)
+    else:
+        edu = str(edu_raw) if edu_raw else "Not specified"
+
+    exp_raw = user_profile.get("experience", [])
+    if isinstance(exp_raw, list) and exp_raw:
+        exp_items = []
+        for x in exp_raw:
+            if isinstance(x, dict):
+                r = x.get("role", "")
+                c = x.get("company", "")
+                dur = x.get("duration", "")
+                part = f"{r} at {c}" if c else r
+                if dur:
+                    part += f" ({dur})"
+                exp_items.append(part)
+            else:
+                exp_items.append(str(x))
+        exp = "; ".join(exp_items)
+    elif isinstance(exp_raw, dict):
+        if exp_raw.get("role"):
+            exp = f"{exp_raw.get('role')} at {exp_raw.get('company', '')}"
+        elif exp_raw.get("years"):
+            exp = f"{exp_raw.get('years')} Years Experience"
+        else:
+            exp = "Fresher / Entry Level"
+    else:
+        exp = str(exp_raw) if exp_raw else "Fresher / Entry Level"
     
     profile_data = [
         [Paragraph("<b>Normalized Skills:</b>", bold_body_style), Paragraph(clean_text(skills_preview) or "None detected", body_style)],
-        [Paragraph("<b>Education:</b>", bold_body_style), Paragraph(edu, body_style)],
-        [Paragraph("<b>Experience:</b>", bold_body_style), Paragraph(str(exp), body_style)],
+        [Paragraph("<b>Education:</b>", bold_body_style), Paragraph(clean_text(edu), body_style)],
+        [Paragraph("<b>Experience:</b>", bold_body_style), Paragraph(clean_text(exp), body_style)],
     ]
     p_table = Table(profile_data, colWidths=[130, 410])
     p_table.setStyle(TableStyle([

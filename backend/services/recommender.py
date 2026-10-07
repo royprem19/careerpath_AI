@@ -20,7 +20,7 @@ def recommend_roles(user_skills: list[str], user_education: any, user_experience
     if isinstance(user_experience, dict):
         years_exp = float(user_experience.get("years", 0) or 0.0)
     elif isinstance(user_experience, list) and user_experience:
-        years_exp = float(len(user_experience))
+        years_exp = sum(float(e.get("years", 0.5) if isinstance(e, dict) else 0.5) for e in user_experience)
         
     for role in all_roles:
         rid = str(role.get("id", ""))

@@ -9,7 +9,8 @@ import RoadmapTimeline from '../components/RoadmapTimeline';
 import { 
   Download, RefreshCw, ArrowLeft, Target, Info, CheckCircle2, 
   AlertCircle, Sparkles, BookOpen, ExternalLink, Award, IndianRupee,
-  UploadCloud, FileText, Briefcase, Compass, ShieldCheck
+  UploadCloud, FileText, Briefcase, Compass, ShieldCheck,
+  TrendingUp, BarChart2
 } from 'lucide-react';
 import { analyzeGap, getRecommendations, getRoadmap, downloadReport, getRoles } from '../services/api';
 
@@ -273,6 +274,51 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+
+      {/* SAS CU Hackathon: Predictive Intelligence & Market Insights Quick Banner */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-5 rounded-3xl bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 text-white shadow-md relative overflow-hidden flex flex-col justify-between border border-indigo-800/40">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/20 text-indigo-200">
+                Empirical ML Model (84.3% Acc)
+              </span>
+            </div>
+            <h3 className="text-base font-black text-white">AI Promotion & Salary Hike Simulator</h3>
+            <p className="text-xs text-indigo-200 leading-relaxed">
+              Trained on 139 Junior Data Scientists. Adjust your Storytelling, Math/Stats, and Coding competencies to simulate your promotion probability.
+            </p>
+          </div>
+          <button
+            onClick={() => navigate('/career-growth')}
+            className="mt-4 w-fit px-4 py-2 rounded-xl bg-white text-indigo-900 hover:bg-indigo-50 font-black text-xs transition-all shadow-xs flex items-center gap-1.5"
+          >
+            <span>Simulate Promotion & Leadership</span>
+            <TrendingUp size={14} />
+          </button>
+        </div>
+
+        <div className="p-5 rounded-3xl bg-gradient-to-br from-blue-900 via-slate-900 to-slate-950 text-white shadow-md relative overflow-hidden flex flex-col justify-between border border-blue-800/40">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/20 text-blue-200">
+                17,400+ Indian Job Postings
+              </span>
+            </div>
+            <h3 className="text-base font-black text-white">Macro Market & SAS Tool Demand</h3>
+            <p className="text-xs text-blue-200 leading-relaxed">
+              Explore city-wise average salaries (Delhi ₹14.9L, Bangalore ₹13.2L), recruiter volume (TCS, Accenture), and why SAS ranks #3 in analytical tool demand.
+            </p>
+          </div>
+          <button
+            onClick={() => navigate('/market-insights')}
+            className="mt-4 w-fit px-4 py-2 rounded-xl bg-white text-blue-900 hover:bg-blue-50 font-black text-xs transition-all shadow-xs flex items-center gap-1.5"
+          >
+            <span>View Market Intelligence</span>
+            <BarChart2 size={14} />
+          </button>
+        </div>
+      </div>
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

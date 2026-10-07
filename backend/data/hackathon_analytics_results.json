@@ -1,0 +1,467 @@
+{
+  "jds_skill_traits": {
+    "dataset_name": "JDS Skill Traits (Junior Data Scientists)",
+    "sample_size": 139,
+    "target_distribution": {
+      "High Salary Hike (1)": 73,
+      "Low Salary Hike (0)": 66
+    },
+    "descriptive_and_hypothesis_tests": {
+      "big_data_skills": {
+        "high_hike_mean": 3.94,
+        "high_hike_sd": 0.708,
+        "low_hike_mean": 3.75,
+        "low_hike_sd": 0.962,
+        "mean_diff": 0.19,
+        "t_statistic": 1.323,
+        "t_test_p_val": 0.18804392524056637,
+        "mann_whitney_p_val": 0.21723125429287382,
+        "pearson_r": 0.112,
+        "pearson_p_val": 0.18804392524056723
+      },
+      "maths-stats_skills": {
+        "high_hike_mean": 4.712,
+        "high_hike_sd": 0.424,
+        "low_hike_mean": 3.83,
+        "low_hike_sd": 0.939,
+        "mean_diff": 0.882,
+        "t_statistic": 7.197,
+        "t_test_p_val": 3.671592419299227e-11,
+        "mann_whitney_p_val": 6.657535629392648e-09,
+        "pearson_r": 0.524,
+        "pearson_p_val": 3.6715924192992465e-11
+      },
+      "coding_skills": {
+        "high_hike_mean": 4.644,
+        "high_hike_sd": 0.653,
+        "low_hike_mean": 3.853,
+        "low_hike_sd": 0.931,
+        "mean_diff": 0.791,
+        "t_statistic": 5.797,
+        "t_test_p_val": 4.437469916894535e-08,
+        "mann_whitney_p_val": 2.0275005979496897e-07,
+        "pearson_r": 0.444,
+        "pearson_p_val": 4.437469916894593e-08
+      },
+      "ai_and_ml_skills": {
+        "high_hike_mean": 4.822,
+        "high_hike_sd": 0.317,
+        "low_hike_mean": 4.283,
+        "low_hike_sd": 0.817,
+        "mean_diff": 0.539,
+        "t_statistic": 5.179,
+        "t_test_p_val": 7.797414241305545e-07,
+        "mann_whitney_p_val": 8.567173857110042e-05,
+        "pearson_r": 0.405,
+        "pearson_p_val": 7.797414241305478e-07
+      },
+      "dashboard_and_storytelling_skills": {
+        "high_hike_mean": 4.845,
+        "high_hike_sd": 0.487,
+        "low_hike_mean": 3.814,
+        "low_hike_sd": 1.0,
+        "mean_diff": 1.032,
+        "t_statistic": 7.791,
+        "t_test_p_val": 1.4870994614447406e-12,
+        "mann_whitney_p_val": 2.3984746423395638e-11,
+        "pearson_r": 0.554,
+        "pearson_p_val": 1.4870994614447943e-12
+      }
+    },
+    "cross_validation_models": {
+      "Logistic Regression (MLE)": {
+        "accuracy_mean": 0.8359,
+        "accuracy_std": 0.0638,
+        "precision_mean": 0.8334,
+        "recall_mean": 0.8771,
+        "f1_mean": 0.8501,
+        "roc_auc_mean": 0.8944
+      },
+      "Random Forest Ensemble": {
+        "accuracy_mean": 0.7928,
+        "accuracy_std": 0.0954,
+        "precision_mean": 0.7842,
+        "recall_mean": 0.839,
+        "f1_mean": 0.8057,
+        "roc_auc_mean": 0.8671
+      },
+      "Decision Tree (CART)": {
+        "accuracy_mean": 0.7646,
+        "accuracy_std": 0.106,
+        "precision_mean": 0.7467,
+        "recall_mean": 0.8791,
+        "f1_mean": 0.7967,
+        "roc_auc_mean": 0.8065
+      },
+      "Gaussian Naive Bayes": {
+        "accuracy_mean": 0.8425,
+        "accuracy_std": 0.0468,
+        "precision_mean": 0.8498,
+        "recall_mean": 0.8638,
+        "f1_mean": 0.8525,
+        "roc_auc_mean": 0.8971
+      }
+    },
+    "model_fit_statistics": {
+      "mcfadden_pseudo_r2": 0.4992,
+      "aic": 108.33,
+      "bic": 125.93
+    },
+    "feature_parameters_and_importance": {
+      "big_data_skills": {
+        "coef_beta": 0.9611,
+        "std_error": 0.3,
+        "p_value": 0.0013559436349681597,
+        "odds_ratio": 2.6145,
+        "rf_feature_importance": 0.0551
+      },
+      "maths-stats_skills": {
+        "coef_beta": 1.767,
+        "std_error": 0.4125,
+        "p_value": 1.8402952294049868e-05,
+        "odds_ratio": 5.8535,
+        "rf_feature_importance": 0.2569
+      },
+      "coding_skills": {
+        "coef_beta": 0.6076,
+        "std_error": 0.3305,
+        "p_value": 0.0660050009313311,
+        "odds_ratio": 1.8361,
+        "rf_feature_importance": 0.2177
+      },
+      "ai_and_ml_skills": {
+        "coef_beta": 1.2337,
+        "std_error": 0.4107,
+        "p_value": 0.002666104024285687,
+        "odds_ratio": 3.4341,
+        "rf_feature_importance": 0.1985
+      },
+      "dashboard_and_storytelling_skills": {
+        "coef_beta": 1.3317,
+        "std_error": 0.3421,
+        "p_value": 9.928747305343322e-05,
+        "odds_ratio": 3.7877,
+        "rf_feature_importance": 0.2718
+      }
+    }
+  },
+  "sds_personality_traits": {
+    "dataset_name": "SDS Personality Traits (Senior Data Scientists)",
+    "sample_size": 161,
+    "target_distribution": {
+      "High Leadership Success (1)": 85,
+      "Low Leadership Success (0)": 76
+    },
+    "descriptive_and_hypothesis_tests": {
+      "neuroticism": {
+        "high_success_mean": 36.129,
+        "high_success_sd": 9.217,
+        "low_success_mean": 36.263,
+        "low_success_sd": 13.125,
+        "mean_diff": -0.134,
+        "t_statistic": -0.075,
+        "t_test_p_val": 0.9403472841741556,
+        "mann_whitney_p_val": 0.45393251061682516,
+        "pearson_r": -0.006,
+        "pearson_p_val": 0.9403472841741538
+      },
+      "extraversion": {
+        "high_success_mean": 48.859,
+        "high_success_sd": 7.425,
+        "low_success_mean": 36.882,
+        "low_success_sd": 13.138,
+        "mean_diff": 11.977,
+        "t_statistic": 7.17,
+        "t_test_p_val": 2.672634486387212e-11,
+        "mann_whitney_p_val": 5.785878581555918e-10,
+        "pearson_r": 0.494,
+        "pearson_p_val": 2.672634486387237e-11
+      },
+      "openness_to_experience": {
+        "high_success_mean": 48.494,
+        "high_success_sd": 5.65,
+        "low_success_mean": 33.316,
+        "low_success_sd": 10.609,
+        "mean_diff": 15.178,
+        "t_statistic": 11.421,
+        "t_test_p_val": 1.937869974202976e-22,
+        "mann_whitney_p_val": 3.6443711270759637e-17,
+        "pearson_r": 0.671,
+        "pearson_p_val": 1.9378699742029295e-22
+      },
+      "agreeableness": {
+        "high_success_mean": 47.718,
+        "high_success_sd": 4.924,
+        "low_success_mean": 41.118,
+        "low_success_sd": 14.778,
+        "mean_diff": 6.599,
+        "t_statistic": 3.859,
+        "t_test_p_val": 0.00016531529863787877,
+        "mann_whitney_p_val": 0.0008744406423124497,
+        "pearson_r": 0.293,
+        "pearson_p_val": 0.00016531529863787994
+      },
+      "conscientiousness": {
+        "high_success_mean": 53.682,
+        "high_success_sd": 6.067,
+        "low_success_mean": 35.737,
+        "low_success_sd": 12.502,
+        "mean_diff": 17.946,
+        "t_statistic": 11.701,
+        "t_test_p_val": 3.306731183611147e-23,
+        "mann_whitney_p_val": 1.4398958441775037e-16,
+        "pearson_r": 0.68,
+        "pearson_p_val": 3.3067311836111903e-23
+      }
+    },
+    "cross_validation_models": {
+      "Logistic Regression (MLE)": {
+        "accuracy_mean": 0.932,
+        "accuracy_std": 0.0292,
+        "precision_mean": 0.9127,
+        "recall_mean": 0.9647,
+        "f1_mean": 0.9374,
+        "roc_auc_mean": 0.9631
+      },
+      "Random Forest Ensemble": {
+        "accuracy_mean": 0.9445,
+        "accuracy_std": 0.035,
+        "precision_mean": 0.9186,
+        "recall_mean": 0.9882,
+        "f1_mean": 0.9503,
+        "roc_auc_mean": 0.9953
+      },
+      "Decision Tree (CART)": {
+        "accuracy_mean": 0.9443,
+        "accuracy_std": 0.0225,
+        "precision_mean": 0.9378,
+        "recall_mean": 0.9647,
+        "f1_mean": 0.9484,
+        "roc_auc_mean": 0.9621
+      },
+      "Gaussian Naive Bayes": {
+        "accuracy_mean": 0.9567,
+        "accuracy_std": 0.0149,
+        "precision_mean": 0.9654,
+        "recall_mean": 0.953,
+        "f1_mean": 0.9586,
+        "roc_auc_mean": 0.9947
+      }
+    },
+    "model_fit_statistics": {
+      "mcfadden_pseudo_r2": 0.7567,
+      "aic": 66.18,
+      "bic": 84.67
+    },
+    "feature_parameters_and_importance": {
+      "neuroticism": {
+        "coef_beta": 0.1215,
+        "std_error": 0.0267,
+        "p_value": 5.23471684443777e-06,
+        "odds_ratio": 1.1292,
+        "rf_feature_importance": 0.0028
+      },
+      "extraversion": {
+        "coef_beta": 0.1128,
+        "std_error": 0.0351,
+        "p_value": 0.0013287623195297193,
+        "odds_ratio": 1.1194,
+        "rf_feature_importance": 0.2305
+      },
+      "openness_to_experience": {
+        "coef_beta": 0.2686,
+        "std_error": 0.0389,
+        "p_value": 4.901190564510216e-12,
+        "odds_ratio": 1.3082,
+        "rf_feature_importance": 0.3131
+      },
+      "agreeableness": {
+        "coef_beta": 0.0798,
+        "std_error": 0.0376,
+        "p_value": 0.03369994551612465,
+        "odds_ratio": 1.083,
+        "rf_feature_importance": 0.1365
+      },
+      "conscientiousness": {
+        "coef_beta": 0.2487,
+        "std_error": 0.0412,
+        "p_value": 1.636645929892211e-09,
+        "odds_ratio": 1.2823,
+        "rf_feature_importance": 0.3172
+      }
+    }
+  },
+  "datascience_jobs": {
+    "dataset_name": "DataScience Jobs (Enterprise Hiring)",
+    "sample_size": 1602,
+    "total_active_jobs_represented": 93005,
+    "distinct_companies": 642,
+    "compensation_distribution_lpa": {
+      "avg_salary_mean": 13.23,
+      "avg_salary_median": 11.9,
+      "avg_salary_std": 7.84,
+      "min_salary_mean": 8.63,
+      "max_salary_mean": 19.14
+    },
+    "top_volume_recruiters": {
+      "TCS": 9064,
+      "Accenture": 5425,
+      "Cognizant": 3813,
+      "Wipro": 2566,
+      "IBM": 2480,
+      "Genpact": 2147,
+      "Capgemini": 1994,
+      "L&T Infotech": 1873,
+      "Tech Mahindra": 1830,
+      "HCL Technologies": 1783
+    },
+    "top_compensation_companies": {
+      "Emirates Airlines": 68.3,
+      "Hitachi": 40.0,
+      "Intuit": 39.0,
+      "MSCI": 38.4,
+      "Microsoft Corporation": 37.87,
+      "Automatic Data Processing": 35.45,
+      "Innova Solutions": 33.4,
+      "Fidelity International": 33.25,
+      "Roche Diagnostics": 33.1,
+      "Chegg": 32.2
+    },
+    "econometric_salary_model": {
+      "formula": "Avg_Salary = Beta0 + Beta1*(Experience) + Beta2*log(Job_Volume)",
+      "coefficients": {
+        "intercept": 12.9453,
+        "experience_coef": 1.7367,
+        "log_openings_coef": -1.4133
+      },
+      "standard_errors": [
+        0.5972,
+        0.0699,
+        0.1476
+      ],
+      "t_statistics": [
+        21.6778,
+        24.8602,
+        -9.5763
+      ],
+      "p_values": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "r_squared": 0.3872,
+      "adjusted_r_squared": 0.3864,
+      "rmse": 6.136
+    }
+  },
+  "analytics_jobs": {
+    "dataset_name": "Analytics Jobs (Macro Demand)",
+    "sample_size": 15841,
+    "data_quality_null_audit": {
+      "s_no": 0.0,
+      "experience": 0.0,
+      "job_description": 22.15,
+      "job_desig": 0.0,
+      "job_type": 75.82,
+      "key_skills": 0.01,
+      "location": 0.0,
+      "salary": 0.0
+    },
+    "salary_tier_breakdown": {
+      "10to15": 3608,
+      "15to25": 3281,
+      "6to10": 2876,
+      "0to3": 2592,
+      "3to6": 2239,
+      "25to50": 1245
+    },
+    "key_analytics_tools_demand": {
+      "SQL": 1582,
+      "Python": 962,
+      "SAS": 876,
+      "R": 756,
+      "Machine Learning": 734,
+      "Tableau": 201,
+      "Excel": 664,
+      "Power BI": 92
+    },
+    "top_20_skills": {
+      "...": 946,
+      "SQL": 742,
+      "Analytics": 691,
+      "Python": 644,
+      "Java": 566,
+      "Finance": 531,
+      "SAS": 517,
+      "R": 516,
+      "Machine Learning": 423,
+      "Javascript": 418,
+      "Business Analysis": 375,
+      "Digital Marketing": 371,
+      "Data Analysis": 359,
+      "Outsourcing": 358,
+      "SEO": 336,
+      "Sales": 282,
+      "Accounting": 270,
+      "Excel": 267,
+      "Project Management": 256,
+      "Business process": 255
+    },
+    "geographic_clusters": {
+      "Bengaluru": {
+        "job_count": 3333,
+        "percentage_share": 21.04,
+        "mean_exp_years": 6.55,
+        "mean_salary_lpa": 13.24
+      },
+      "Mumbai": {
+        "job_count": 1992,
+        "percentage_share": 12.57,
+        "mean_exp_years": 6.42,
+        "mean_salary_lpa": 13.62
+      },
+      "Gurgaon": {
+        "job_count": 1313,
+        "percentage_share": 8.29,
+        "mean_exp_years": 5.67,
+        "mean_salary_lpa": 12.04
+      },
+      "Pune": {
+        "job_count": 945,
+        "percentage_share": 5.97,
+        "mean_exp_years": 6.32,
+        "mean_salary_lpa": 11.86
+      },
+      "Hyderabad": {
+        "job_count": 878,
+        "percentage_share": 5.54,
+        "mean_exp_years": 6.8,
+        "mean_salary_lpa": 12.66
+      },
+      "Chennai": {
+        "job_count": 786,
+        "percentage_share": 4.96,
+        "mean_exp_years": 6.36,
+        "mean_salary_lpa": 10.92
+      },
+      "Delhi NCR": {
+        "job_count": 593,
+        "percentage_share": 3.74,
+        "mean_exp_years": 6.75,
+        "mean_salary_lpa": 14.96
+      },
+      "Noida": {
+        "job_count": 403,
+        "percentage_share": 2.54,
+        "mean_exp_years": 5.63,
+        "mean_salary_lpa": 10.88
+      }
+    },
+    "inferential_statistics": {
+      "location_salary_chi2": 271.83,
+      "location_salary_p_value": 1.9677419819181528e-38,
+      "experience_salary_f_statistic": 2694.41,
+      "experience_salary_anova_p_value": 0.0
+    }
+  }
+}

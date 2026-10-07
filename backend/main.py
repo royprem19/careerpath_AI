@@ -16,7 +16,7 @@ if str(backend_dir) not in sys.path:
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from backend.routers import resume, roles, analysis, recommendations, roadmap, report, auth
+from backend.routers import resume, roles, analysis, recommendations, roadmap, report, auth, talent_intelligence
 from backend.database import get_supabase
 from backend.config import settings
 
@@ -87,6 +87,7 @@ app.include_router(analysis.router)
 app.include_router(recommendations.router)
 app.include_router(roadmap.router)
 app.include_router(report.router)
+app.include_router(talent_intelligence.router)
 
 @app.get("/health")
 async def health_check():

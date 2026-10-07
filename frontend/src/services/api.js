@@ -110,4 +110,23 @@ export const downloadReport = async (reportData) => {
   });
 };
 
+// ==============================================================================
+// SAS CU HACKATHON: TALENT INTELLIGENCE & PREDICTIVE ML APIs
+// ==============================================================================
+export const getMarketOverview = async () => {
+  return api.get('/api/talent/market-overview');
+};
+
+export const predictJDSHike = async (scores) => {
+  return api.post('/api/talent/jds-hike-predict', scores);
+};
+
+export const predictSDSLeadership = async (scores) => {
+  return api.post('/api/talent/sds-leadership-predict', scores);
+};
+
+export const estimateMarketSalary = async (params) => {
+  return api.post('/api/talent/salary-benchmark', params);
+};
+
 export default api;

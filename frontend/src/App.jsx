@@ -10,6 +10,8 @@ import AuthPage from './pages/AuthPage';
 import UserProfilePage from './pages/UserProfilePage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import AboutPage from './pages/AboutPage';
+import CareerGrowthSimulator from './pages/CareerGrowthSimulator';
+import MarketInsightsPage from './pages/MarketInsightsPage';
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
               <Route path="/profile" element={<ProfileReview />} />
               <Route path="/roles" element={<RoleSelection />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/career-growth" element={<CareerGrowthSimulator />} />
+              <Route path="/market-insights" element={<MarketInsightsPage />} />
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/my-profile" element={<UserProfilePage />} />
               <Route path="/verify-email" element={<VerifyEmailPage />} />
