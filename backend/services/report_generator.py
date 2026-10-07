@@ -118,6 +118,7 @@ def generate_pdf_report(user_profile: dict, gap_analysis: dict, recommendations:
     # Candidate Profile Overview
     story.append(Paragraph("Candidate Profile Snapshot", section_style))
     skills_list = user_profile.get("skills", [])
+    skills_preview = ", ".join(skills_list[:15]) if isinstance(skills_list, list) else str(skills_list)
     edu_raw = user_profile.get("education", [])
     if isinstance(edu_raw, list) and edu_raw:
         edu_items = []
