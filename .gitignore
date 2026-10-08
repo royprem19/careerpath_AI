@@ -6,6 +6,7 @@
 backend/.env
 
 # Python Virtual Environments & Bytecode
+*.zip
 __pycache__/
 *.py[cod]
 *$py.class

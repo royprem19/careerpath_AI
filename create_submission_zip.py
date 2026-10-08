@@ -75,8 +75,8 @@ def make_submission_zip(team_name="CareerPath_AI"):
         )
         print("✓ Packaged: Frontend Source Code (React, Vite, TailwindCSS, Pages)")
         
-    # Copy root scripts
-    for f in ["README.md", "create_presentation.py"]:
+    # Copy root scripts and presentation
+    for f in ["README.md", "create_presentation.py", "create_updated_presentation.py", "CareerPath_AI_Presentation.pptx"]:
         p = ROOT_DIR / f
         if p.exists():
             shutil.copy2(p, src_dir / f)
