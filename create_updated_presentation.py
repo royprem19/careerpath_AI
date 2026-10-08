@@ -50,7 +50,7 @@ def build_presentation():
     blank_layout = prs.slide_layouts[6]
 
     # Helper: Slide Base
-    def add_base_decorations(slide, slide_num, total_slides=16, rubric_tag=None):
+    def add_base_decorations(slide, slide_num, total_slides=18, rubric_tag=None):
         # Top accent line
         top_bar = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0), Inches(0), SLIDE_WIDTH, Inches(0.06))
         top_bar.fill.solid()
@@ -216,11 +216,12 @@ def build_presentation():
         ("3. Data Exploration & Preparation", "15 Marks", "Slides 5-7", "7 datasets provenance, rows before->after cleaning audit, null imputations, 4 dedicated high-res EDA figures."),
         ("4. Data Analysis & ML Pipeline", "30 Marks", "Slides 8-11", "93k jobs market audit, Chi-Square (p<10⁻³⁷), 4-model CV comparison, Ridge regressor (fresher MAE ₹1.18L), weight sensitivity."),
         ("5. Results & Conclusions", "20 Marks", "Slides 12-13", "Live application workflow, Career Growth simulator, Talent Intelligence, ReportLab PDF export."),
-        ("6. Implications & Impact", "10 Marks", "Slides 14-15", "60-student batch pilot (41.2% -> 86.7% placement ready), demographic parity audit (DIR=1.000), NEP 2020.")
+        ("6. Implications & Impact", "10 Marks", "Slides 14-15", "60-student batch pilot (41.2% -> 86.7% placement ready), demographic parity audit (DIR=1.000), NEP 2020."),
+        ("7. Future Implementation", "Jury Advisory", "Slides 16-17", "Top 30 Jury Enhancements: Proctored Skill Verification (10-Q, 80% pass), Anti-Cheat Sandbox, Dynamic Resume, AI Viva.")
     ]
 
     # Create Rubric Table
-    tbl_s2 = s2.shapes.add_table(len(rubric_rows) + 1, 4, Inches(0.8), Inches(1.5), Inches(11.7), Inches(5.1))
+    tbl_s2 = s2.shapes.add_table(len(rubric_rows) + 1, 4, Inches(0.8), Inches(1.4), Inches(11.7), Inches(5.35))
     tbl = tbl_s2.table
     tbl.columns[0].width = Inches(2.5)
     tbl.columns[1].width = Inches(1.1)
@@ -234,7 +235,7 @@ def build_presentation():
         cell.fill.fore_color.rgb = PRIMARY_BLUE
         p = cell.text_frame.paragraphs[0]
         p.text = h
-        p.font.size = Pt(10.5)
+        p.font.size = Pt(10)
         p.font.bold = True
         p.font.color.rgb = WHITE
 
@@ -245,7 +246,7 @@ def build_presentation():
             cell.fill.fore_color.rgb = LIGHT_BG if i % 2 == 1 else WHITE
             p = cell.text_frame.paragraphs[0]
             p.text = val
-            p.font.size = Pt(9.5)
+            p.font.size = Pt(8.5)
             p.font.color.rgb = DARK_TEXT
             if j == 1:
                 p.font.bold = True
@@ -984,16 +985,192 @@ def build_presentation():
     p.font.color.rgb = DARK_TEXT
 
     # ==============================================================================
-    # SLIDE 16: CONCLUSION & TECH STACK
+    # SLIDE 16: FUTURE IMPLEMENTATION - SKILL VERIFICATION & LMS SYNC
     # ==============================================================================
     s16 = prs.slides.add_slide(blank_layout)
-    bg16 = s16.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0), Inches(0), SLIDE_WIDTH, SLIDE_HEIGHT)
-    bg16.fill.solid()
-    bg16.fill.fore_color.rgb = RGBColor(0x0A, 0x11, 0x28)
-    bg16.line.fill.background()
+    add_base_decorations(s16, 16, rubric_tag="Jury Advisory · Future Implementation (Part 1)")
+    add_slide_header(s16, "Future Implementation: Proctored Skill Verification & Live LMS Tracking",
+                     "Addressing Top-30 Jury Advisory: Eliminating resume exaggeration through adaptive micro-assessments, secure proctoring, and live platform sync.")
+
+    # Top Row: 3 Functional Pillar Cards
+    # Card 1: Resume Skill Fraud & Exaggeration Defense
+    add_styled_card(s16, Inches(0.8), Inches(1.4), Inches(3.8), Inches(3.8), border_color=ORANGE_WARN, title="1. Resume Fraud & Exaggeration Defense", title_color=ORANGE_WARN)
+    tb_c1 = s16.shapes.add_textbox(Inches(0.95), Inches(1.85), Inches(3.5), Inches(3.25))
+    tf_c1 = tb_c1.text_frame
+    tf_c1.word_wrap = True
+    c1_bullets = [
+        ("The Industry Vulnerability", "Candidates routinely list inflated or unverified keywords on resumes that do not reflect working technical proficiency."),
+        ("Dual-Status Verification", "Skills initialize as 'Self-Declared' (0.5x weight in matching). Upgraded to 'Empirically Verified' (1.0x weight) strictly post-evaluation."),
+        ("Semantic Cross-Validation", "NLP entity parser cross-references claimed skills against project repos, commit histories, and coursework context to flag anomalies."),
+        ("Recruiter Authenticity Index", "Outputs a verified 'Candidate Authenticity Score (0-100%)' providing transparent trust metrics to hiring partners.")
+    ]
+    for idx, (b_title, b_desc) in enumerate(c1_bullets):
+        p = tf_c1.add_paragraph() if idx > 0 else tf_c1.paragraphs[0]
+        p.text = f"• {b_title}: "
+        p.font.bold = True
+        p.font.size = Pt(8.5)
+        p.font.color.rgb = ORANGE_WARN
+        p.space_before = Pt(3)
+        r = p.add_run()
+        r.text = b_desc
+        r.font.bold = False
+        r.font.size = Pt(8.0)
+        r.font.color.rgb = DARK_TEXT
+
+    # Card 2: Adaptive 10-Question Skill Assessments
+    add_styled_card(s16, Inches(4.75), Inches(1.4), Inches(3.8), Inches(3.8), border_color=PRIMARY_BLUE, title="2. Adaptive 10-Question Micro-Assessments", title_color=PRIMARY_BLUE)
+    tb_c2 = s16.shapes.add_textbox(Inches(4.90), Inches(1.85), Inches(3.5), Inches(3.25))
+    tf_c2 = tb_c2.text_frame
+    tf_c2.word_wrap = True
+    c2_bullets = [
+        ("Dynamic Micro-Assessments", "Targeted 10-question evaluation dynamically assembled per claimed skill (e.g. React hooks, SQL indexing, Docker networking)."),
+        ("Tri-Tier Question Taxonomy", "4 Conceptual/Syntax questions, 4 Practical Architecture/Scenario problems, and 2 Code Debugging / Output prediction challenges."),
+        ("Strict 70-80% Passing Bar", "Candidate must score at least 7 to 8 correct out of 10 (≥70-80%) to verify competency and earn the official verifiable badge."),
+        ("Adaptive Difficulty Scaling", "Item Response Theory (IRT) adjusts question complexity in real time to accurately measure true junior vs mid-level competence.")
+    ]
+    for idx, (b_title, b_desc) in enumerate(c2_bullets):
+        p = tf_c2.add_paragraph() if idx > 0 else tf_c2.paragraphs[0]
+        p.text = f"• {b_title}: "
+        p.font.bold = True
+        p.font.size = Pt(8.5)
+        p.font.color.rgb = PRIMARY_BLUE
+        p.space_before = Pt(3)
+        r = p.add_run()
+        r.text = b_desc
+        r.font.bold = False
+        r.font.size = Pt(8.0)
+        r.font.color.rgb = DARK_TEXT
+
+    # Card 3: Anti-Cheating Lockdown & Security Protocol
+    add_styled_card(s16, Inches(8.7), Inches(1.4), Inches(3.8), Inches(3.8), border_color=RED_ACCENT, title="3. Anti-Cheating Sandbox & Attempt Caps", title_color=RED_ACCENT)
+    tb_c3 = s16.shapes.add_textbox(Inches(8.85), Inches(1.85), Inches(3.5), Inches(3.25))
+    tf_c3 = tb_c3.text_frame
+    tf_c3.word_wrap = True
+    c3_bullets = [
+        ("Strict 3-Attempt Maximum", "Strict limit of 3 lifetime attempts per skill module to eliminate brute-forcing and question-memorization loopholes."),
+        ("Mandatory Cooldown Period", "Failed attempts trigger a mandatory 48-hour revision lockout with targeted SWAYAM/NPTEL refresher modules before retesting."),
+        ("Zero-Extension Sandbox", "Browser environment detects and actively blocks browser extensions (ChatGPT, Copilot, sidecar bots, inspect extensions)."),
+        ("System Lockdown Protocol", "Enforces fullscreen, disables copy/paste clipboard APIs, blocks right-click inspection, and logs tab-switch violations.")
+    ]
+    for idx, (b_title, b_desc) in enumerate(c3_bullets):
+        p = tf_c3.add_paragraph() if idx > 0 else tf_c3.paragraphs[0]
+        p.text = f"• {b_title}: "
+        p.font.bold = True
+        p.font.size = Pt(8.5)
+        p.font.color.rgb = RED_ACCENT
+        p.space_before = Pt(3)
+        r = p.add_run()
+        r.text = b_desc
+        r.font.bold = False
+        r.font.size = Pt(8.0)
+        r.font.color.rgb = DARK_TEXT
+
+    # Bottom Full-Width Card: Live LMS Progress Synchronization
+    add_styled_card(s16, Inches(0.8), Inches(5.35), Inches(11.7), Inches(1.55), bg_color=RGBColor(0xEE, 0xF2, 0xFF), border_color=ACCENT_BLUE, title="4. Live LMS Roadmap Progress Tracking (SWAYAM, NPTEL & Institutional Portals)", title_color=PRIMARY_BLUE)
+    tb_lms = s16.shapes.add_textbox(Inches(0.95), Inches(5.72), Inches(11.4), Inches(1.1))
+    tf_lms = tb_lms.text_frame
+    tf_lms.word_wrap = True
+    p_l1 = tf_lms.paragraphs[0]
+    p_l1.text = "• Seamless Educational Ingestion: Connects via LTI / REST Webhooks to SWAYAM, NPTEL, Coursera, and college LMS platforms to track student progress."
+    p_l1.font.size = Pt(8.5)
+    p_l1.font.color.rgb = DARK_TEXT
+    p_l2 = tf_lms.add_paragraph()
+    p_l2.text = "• Live Roadmap Milestone Sync: Ingests video completion rates, weekly assignment submissions, and proctored exam scores in real time."
+    p_l2.font.size = Pt(8.5)
+    p_l2.font.color.rgb = DARK_TEXT
+    p_l2.space_before = Pt(2)
+    p_l3 = tf_lms.add_paragraph()
+    p_l3.text = "• Automated Credential Pathway: Once a student completes a roadmap course, the platform automatically unlocks the proctored 10-Q verification assessment, updating the user's live role-readiness dashboard."
+    p_l3.font.size = Pt(8.5)
+    p_l3.font.color.rgb = DARK_TEXT
+    p_l3.space_before = Pt(2)
+
+    # ==============================================================================
+    # SLIDE 17: FUTURE IMPLEMENTATION - DYNAMIC RESUME & AI INTERVIEW SIMULATOR
+    # ==============================================================================
+    s17 = prs.slides.add_slide(blank_layout)
+    add_base_decorations(s17, 17, rubric_tag="Jury Advisory · Future Implementation (Part 2)")
+    add_slide_header(s17, "Future Implementation: Dynamic Resume Generation & AI Interview Simulator",
+                     "Addressing Top-30 Jury Advisory: Automated resume recompilation with verifiable credentials and conversational multimodal technical viva.")
+
+    # Two Main Cards Side by Side
+    # Left Card: Dynamic Auto-Updated Resume Generator
+    add_styled_card(s17, Inches(0.8), Inches(1.4), Inches(5.7), Inches(4.05), border_color=SUCCESS_GREEN, title="Dynamic Auto-Updated Resume Generator (1-Click Download)", title_color=SUCCESS_GREEN)
+    tb_res = s17.shapes.add_textbox(Inches(0.95), Inches(1.85), Inches(5.4), Inches(3.5))
+    tf_res = tb_res.text_frame
+    tf_res.word_wrap = True
+    res_bullets = [
+        ("Automated Resume Recompilation", "The moment a candidate passes a 10-Q assessment (≥7-8/10) or completes a verified roadmap course, CareerPath AI automatically rebuilds their master resume."),
+        ("ATS-Optimized Formatting", "Re-synthesizes candidate experience into industry-standard single-column ATS layouts, optimizing keyword density and machine readability."),
+        ("Verified Badge Injection", "Embeds authenticated competency tags ('Verified: React 80%', 'Certified: NPTEL Data Structures') while deprioritizing unverified claims."),
+        ("Cryptographic QR Verification", "Embeds a tamper-proof QR code linking hiring managers directly to the candidate's verified live skill audit ledger on CareerPath AI."),
+        ("Instant Multi-Format Export", "Provides 1-click download options in ATS-compliant vector PDF and fully editable Microsoft Word DOCX formats.")
+    ]
+    for idx, (b_title, b_desc) in enumerate(res_bullets):
+        p = tf_res.add_paragraph() if idx > 0 else tf_res.paragraphs[0]
+        p.text = f"• {b_title}: "
+        p.font.bold = True
+        p.font.size = Pt(8.5)
+        p.font.color.rgb = SUCCESS_GREEN
+        p.space_before = Pt(3)
+        r = p.add_run()
+        r.text = b_desc
+        r.font.bold = False
+        r.font.size = Pt(8.0)
+        r.font.color.rgb = DARK_TEXT
+
+    # Right Card: Conversational AI Mock Interview & Viva
+    add_styled_card(s17, Inches(6.8), Inches(1.4), Inches(5.7), Inches(4.05), border_color=PRIMARY_BLUE, title="Conversational AI Mock Interview & Technical Viva Simulator", title_color=PRIMARY_BLUE)
+    tb_ai = s17.shapes.add_textbox(Inches(6.95), Inches(1.85), Inches(5.4), Inches(3.5))
+    tf_ai = tb_ai.text_frame
+    tf_ai.word_wrap = True
+    ai_bullets = [
+        ("Role-Specific Interview Persona", "Tailored AI interviewer adapting dynamically to target roles (e.g. Senior Backend Engineer vs Associate Data Analyst)."),
+        ("Project-Grounded Viva Questions", "Analyzes the candidate's verified skills and resume projects to ask probing technical viva questions ('Walk me through your database indexing strategy in Project X')."),
+        ("Adaptive Counter-Probing", "Dynamically challenges superficial answers with architectural edge cases ('What happens if your cache invalidation fails under high load?')."),
+        ("Multimodal 4-D Scoring Rubric", "Evaluates candidate responses across 4 dimensions: (1) Technical Correctness, (2) Problem-Solving Structure, (3) Communication Clarity, and (4) Speech Delivery."),
+        ("Actionable Post-Viva Diagnostics", "Generates an instant feedback report highlighting strong answers, conceptual blindspots, and personalized roadmap study links.")
+    ]
+    for idx, (b_title, b_desc) in enumerate(ai_bullets):
+        p = tf_ai.add_paragraph() if idx > 0 else tf_ai.paragraphs[0]
+        p.text = f"• {b_title}: "
+        p.font.bold = True
+        p.font.size = Pt(8.5)
+        p.font.color.rgb = PRIMARY_BLUE
+        p.space_before = Pt(3)
+        r = p.add_run()
+        r.text = b_desc
+        r.font.bold = False
+        r.font.size = Pt(8.0)
+        r.font.color.rgb = DARK_TEXT
+
+    # Bottom Full-Width Card: Future Closed-Loop Architecture
+    add_styled_card(s17, Inches(0.8), Inches(5.6), Inches(11.7), Inches(1.3), bg_color=RGBColor(0x0F, 0x17, 0x2A), border_color=ACCENT_BLUE)
+    tb_flow = s17.shapes.add_textbox(Inches(0.95), Inches(5.65), Inches(11.4), Inches(1.2))
+    tf_fl = tb_flow.text_frame
+    tf_fl.word_wrap = True
+    p_fl1 = tf_fl.paragraphs[0]
+    p_fl1.text = "★ End-to-End Closed-Loop Talent Lifecycle (Future Architecture):"
+    p_fl1.font.bold = True
+    p_fl1.font.size = Pt(10)
+    p_fl1.font.color.rgb = RGBColor(0x38, 0xBD, 0xF8)
+    p_fl2 = tf_fl.add_paragraph()
+    p_fl2.text = "Resume Parsing & Gap Audit  ➔  Live LMS Progress Sync (SWAYAM / NPTEL)  ➔  Proctored 10-Q Micro-Assessments (70-80% pass bar, max 3 attempts, anti-cheat sandbox)  ➔  Dynamic Auto-Recompiled Resume (PDF/DOCX + QR Verification)  ➔  Conversational AI Technical Viva  ➔  Pre-Screened Placement Handoff."
+    p_fl2.font.size = Pt(8.5)
+    p_fl2.font.color.rgb = RGBColor(0xCB, 0xD5, 0xE1)
+    p_fl2.space_before = Pt(4)
+
+    # ==============================================================================
+    # SLIDE 18: CONCLUSION & TECH STACK
+    # ==============================================================================
+    s18 = prs.slides.add_slide(blank_layout)
+    bg18 = s18.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0), Inches(0), SLIDE_WIDTH, SLIDE_HEIGHT)
+    bg18.fill.solid()
+    bg18.fill.fore_color.rgb = RGBColor(0x0A, 0x11, 0x28)
+    bg18.line.fill.background()
 
     # Title
-    t_end = s16.shapes.add_textbox(Inches(1.0), Inches(1.2), Inches(11.3), Inches(1.2))
+    t_end = s18.shapes.add_textbox(Inches(1.0), Inches(1.2), Inches(11.3), Inches(1.2))
     p = t_end.text_frame.paragraphs[0]
     p.text = "CareerPath AI: Ready for Impact"
     p.font.size = Pt(40)
@@ -1014,7 +1191,7 @@ def build_presentation():
     ]
     for idx, (head, desc) in enumerate(pillars):
         c_left = Inches(1.0) + Inches(idx * 2.85)
-        c_card = s16.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c_left, Inches(3.0), Inches(2.7), Inches(2.2))
+        c_card = s18.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c_left, Inches(3.0), Inches(2.7), Inches(2.2))
         c_card.fill.solid()
         c_card.fill.fore_color.rgb = RGBColor(0x13, 0x1E, 0x3A)
         c_card.line.color.rgb = RGBColor(0x3B, 0x82, 0xF6)
@@ -1033,14 +1210,14 @@ def build_presentation():
         cp2.space_before = Pt(6)
 
     # Bottom Tech Stack Badges
-    tx_tech = s16.shapes.add_textbox(Inches(1.0), Inches(5.6), Inches(11.3), Inches(1.2))
+    tx_tech = s18.shapes.add_textbox(Inches(1.0), Inches(5.6), Inches(11.3), Inches(1.2))
     p_t = tx_tech.text_frame.paragraphs[0]
-    p_t.text = "Production Tech Stack:"
+    p_t.text = "Production Tech Stack & Future Capabilities:"
     p_t.font.size = Pt(12)
     p_t.font.bold = True
     p_t.font.color.rgb = RGBColor(0x38, 0xBD, 0xF8)
     p_t2 = tx_tech.text_frame.add_paragraph()
-    p_t2.text = "FastAPI 0.115  ·  Python 3.12  ·  React 18 + Vite  ·  TailwindCSS  ·  NumPy & SciPy (Closed-Form)  ·  RapidFuzz  ·  PyMuPDF  ·  ReportLab  ·  Supabase"
+    p_t2.text = "FastAPI 0.115  ·  Python 3.12  ·  React 18 + Vite  ·  TailwindCSS  ·  NumPy & SciPy (Closed-Form)  ·  RapidFuzz  ·  PyMuPDF  ·  ReportLab  ·  Supabase  ·  WebRTC Viva"
     p_t2.font.size = Pt(10)
     p_t2.font.color.rgb = RGBColor(0x94, 0xA3, 0xB8)
     p_t2.space_before = Pt(4)
